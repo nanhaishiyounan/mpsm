@@ -1,1 +1,83 @@
-<!DOCTYPE html> <html lang="zh"> <head> <meta charset="utf-8"/> <title>Markdown在线编辑器 - www.MdEditor.com</title> <link rel="shortcut icon" href="https://www.mdeditor.com/images/logos/favicon.ico" type="image/x-icon"/> </head> <body><h1 id="h1--mpsm"><a name="原生小程序状态管理: mpsm" class="reference-link"></a><span class="header-link octicon octicon-link"></span>原生小程序状态管理: mpsm</h1><p><strong>具备vue+react开发体验</strong></p> <p>将<a href="https://dvajs.com/" title="dva">dva</a>的models状态管理模式，react数据批量更新的特点，以及vue的watch和computed特性，全部封装为一个小程序的状态管理库，不仅实现了小程序的<strong>全局状态管理</strong>，解决跨页通信，还引入了<strong>圈子</strong>概念，来实现组件间的数据传递，弥补原生小程序组件系统的先天缺陷，摆脱各种父子、兄弟、姐妹、街坊邻居、七大姑八大姨、远方表兄弟等等组件间的通信浆糊困扰。</p> <h2 id="h2-u6570u636Eu6D41"><a name="数据流" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据流</h2><p>不管是页面间，还是组件间，嵌套组件内部，都可以通过简单的dispach来管理全局状态或圈子状态（局部）。<br><img src="https://user-gold-cdn.xitu.io/2019/10/24/16df9a1edd38f465?imageView2/2/w/480/h/480/q/85/interlace/1" alt="数据流" title="数据流"> </p><h2 id="h2-u4F7Fu7528u4ECBu7ECD"><a name="使用介绍" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用介绍</h2><p>完全兼容原生代码，已有的业务逻辑代码，即便不适配也可使用此库，不影响已有业务逻辑。</p> <h3 id="h3-u5C0Fu5C3Eu5DF4"><a name="小尾巴" class="reference-link"></a><span class="header-link octicon octicon-link"></span>小尾巴</h3><p><strong>小</strong>：即只需将Page、Component首字母小写。<br><strong>尾巴</strong>：即尾部多调用一次：</p> <pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><code class="lang-javascript"><span class="pln">page</span><span class="pun">({</span><span class="pln"> </span><span class="com">//component</span></code></li><li class="L1"><code class="lang-javascript"><span class="pln"> </span><span class="com">// ...</span></code></li><li class="L2"><code class="lang-javascript"><span class="pun">})()</span></code></li></ol></pre> <h4 id="h4--"><a name="页面注册、组件注册示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>页面注册、组件注册示例</h4><pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><code class="lang-javascript"><span class="kwd">import</span><span class="pln"> </span><span class="pun">{</span><span class="pln">dispatch</span><span class="pun">,</span><span class="pln"> page</span><span class="pun">,</span><span class="pln"> component</span><span class="pun">}</span><span class="pln"> from </span><span class="str">'</span><span class="pun">../../</span><span class="pln">mpsm</span><span class="pun">/</span><span class="pln">index</span></code></li><li class="L1"><code class="lang-javascript"></code></li><li class="L2"><code class="lang-javascript"><span class="pln">page</span><span class="pun">({</span><span class="pln"> </span><span class="com">// 或者 component</span></code></li><li class="L3"><code class="lang-javascript"><span class="pln"> watch</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L4"><code class="lang-javascript"><span class="pln"> isLogin</span><span class="pun">(</span><span class="pln">newState</span><span class="pun">,</span><span class="pln"> oldState</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code class="lang-javascript"><span class="pln"> console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">newState</span><span class="pun">,</span><span class="pln"> oldState</span><span class="pun">)</span></code></li><li class="L6"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L7"><code class="lang-javascript"><span class="pln"> </span><span class="pun">},</span></code></li><li class="L8"><code class="lang-javascript"><span class="pln"> computed</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code class="lang-javascript"><span class="pln"> countComputed</span><span class="pun">(</span><span class="pln">data</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L0"><code class="lang-javascript"><span class="pln"> </span><span class="kwd">return</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">count </span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span></code></li><li class="L1"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L2"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L3"><code class="lang-javascript"><span class="pln"> data</span><span class="pun">:{</span></code></li><li class="L4"><code class="lang-javascript"><span class="pln"> count</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span></code></li><li class="L5"><code class="lang-javascript"><span class="pln"> </span><span class="pun">},</span></code></li><li class="L6"><code class="lang-javascript"><span class="pln"> onLoad</span><span class="pun">(){},</span></code></li><li class="L7"><code class="lang-javascript"><span class="pln"> login</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L8"><code class="lang-javascript"><span class="pln"> dispatch</span><span class="pun">({</span></code></li><li class="L9"><code class="lang-javascript"><span class="pln"> type</span><span class="pun">:</span><span class="pln"> </span><span class="str">'userInfo/save'</span><span class="pun">,</span></code></li><li class="L0"><code class="lang-javascript"><span class="pln"> payload</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code class="lang-javascript"><span class="pln"> isLogin</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">true</span></code></li><li class="L2"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L3"><code class="lang-javascript"><span class="pln"> </span><span class="pun">})</span></code></li><li class="L4"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}，</span></code></li><li class="L5"><code class="lang-javascript"><span class="pln"> localState</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L6"><code class="lang-javascript"><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">dispatch</span><span class="pun">({</span></code></li><li class="L7"><code class="lang-javascript"><span class="pln"> type</span><span class="pun">:</span><span class="pln"> </span><span class="str">'group/nameA'</span><span class="pun">,</span></code></li><li class="L8"><code class="lang-javascript"><span class="pln"> payload</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code class="lang-javascript"><span class="pln"> name</span><span class="pun">:</span><span class="pln"> </span><span class="str">'A_component'</span></code></li><li class="L0"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L1"><code class="lang-javascript"><span class="pln"> </span><span class="pun">})</span></code></li><li class="L2"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L3"><code class="lang-javascript"><span class="pun">})(({</span><span class="pln">userInfo</span><span class="pun">})</span><span class="pln"> </span><span class="pun">=&gt;</span><span class="pln"> </span><span class="pun">{</span><span class="com">//订阅全局状态</span></code></li><li class="L4"><code class="lang-javascript"><span class="pln"> </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code class="lang-javascript"><span class="pln"> isLogin</span><span class="pun">:</span><span class="pln"> userInfo</span><span class="pun">.</span><span class="pln">isLogin</span></code></li><li class="L6"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L7"><code class="lang-javascript"><span class="pun">},</span><span class="pln"> </span><span class="pun">(</span><span class="pln">groups</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=&gt;</span><span class="pln"> </span><span class="pun">{</span><span class="com">//订阅局部状态</span></code></li><li class="L8"><code class="lang-javascript"><span class="pln"> </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code class="lang-javascript"><span class="pln"> nameA</span><span class="pun">:</span><span class="pln"> groups</span><span class="pun">.</span><span class="pln">nameA </span><span class="pun">&amp;&amp;</span><span class="pln"> groups</span><span class="pun">.</span><span class="pln">nameA</span><span class="pun">.</span><span class="pln">name </span><span class="pun">||</span><span class="pln"> </span><span class="str">'--'</span></code></li><li class="L0"><code class="lang-javascript"><span class="pln"> </span><span class="pun">}</span></code></li><li class="L1"><code class="lang-javascript"><span class="pun">})</span></code></li></ol></pre> <h5 id="h5-tips-"><a name="tips:" class="reference-link"></a><span class="header-link octicon octicon-link"></span>tips:</h5><ol> <li>dispatch用于分发全局状态，风格与dva保持一致；</li><li>Page和Component实例内置this.dispatch方法，用于分发局部状态。</li></ol> <h3 id="h3--tables"><a name="绘制表格 Tables" class="reference-link"></a><span class="header-link octicon octicon-link"></span>绘制表格 Tables</h3><table> <thead> <tr> <th>项目</th> <th style="text-align:right">价格</th> <th style="text-align:center">数量</th> </tr> </thead> <tbody> <tr> <td>计算机</td> <td style="text-align:right">$1600</td> <td style="text-align:center">5</td> </tr> <tr> <td>手机</td> <td style="text-align:right">$12</td> <td style="text-align:center">12</td> </tr> <tr> <td>管线</td> <td style="text-align:right">$1</td> <td style="text-align:center">234</td> </tr> </tbody> </table> </body> </html>
+# 原生小程序状态管理: mpsm
+
+**具备vue+react开发体验**
+
+将[dva](https://dvajs.com/ "dva")的models状态管理模式，react数据批量更新的特点，以及vue的watch和computed特性，全部封装为一个小程序的状态管理库，不仅实现了小程序的**全局状态管理**，解决跨页通信，还引入了**圈子**概念，来实现组件间的数据传递，弥补原生小程序组件系统的先天缺陷，摆脱各种父子、兄弟、姐妹、街坊邻居、七大姑八大姨、远方表兄弟等等组件间的通信浆糊困扰。
+
+
+## 数据流
+不管是页面间，还是组件间，嵌套组件内部，都可以通过简单的dispach来管理全局状态或圈子状态（局部）。
+![数据流](https://user-gold-cdn.xitu.io/2019/10/24/16df9a1edd38f465?imageView2/2/w/480/h/480/q/85/interlace/1 "数据流")
+
+
+## 使用介绍
+完全兼容原生代码，已有的业务逻辑代码，即便不适配也可使用此库，不影响已有业务逻辑。
+### 小尾巴
+**小**：即只需将Page、Component首字母小写。
+**尾巴**：即尾部多调用一次：
+```javascript
+page({ //component
+	// ...
+})()
+
+```
+
+#### 页面注册、组件注册示例
+```javascript
+import {dispatch, page, component} from '../../mpsm/index
+
+page({ // 或者 component
+	watch: {
+		isLogin(newState, oldState) {
+			console.log(newState, oldState)
+		}
+	},
+	computed: {
+		countComputed(data) {
+			return data.count * 2
+		}
+	}
+	data:{
+		count: 0
+	},
+	onLoad(){},
+	login() {
+		dispatch({
+			type: 'userInfo/save',
+			payload: {
+				isLogin: true
+			}
+		})
+	}，
+	localState() {
+		this.dispatch({
+			type: 'group/nameA',
+			payload: {
+				name: 'A_component'
+			}
+		})
+	}
+})(({userInfo}) => {//订阅全局状态
+	return {
+		isLogin: userInfo.isLogin
+	}
+}, (groups) => {//订阅局部状态
+	return {
+		nameA: groups.nameA && groups.nameA.name || '--'
+	}
+})
+```
+
+##### tips:
+1. dispatch用于分发全局状态，风格与dva保持一致；
+2. Page和Component实例内置this.dispatch方法，用于分发局部状态。
+
+
+### 绘制表格 Tables
+
+| 项目        | 价格   |  数量  |
+| --------   | -----:  | :----:  |
+| 计算机      | $1600   |   5     |
+| 手机        |   $12   |   12   |
+| 管线        |    $1    |  234  |
+
