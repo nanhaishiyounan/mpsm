@@ -1,0 +1,11 @@
+<view class="container">
+  <view class="tips">
+    <text class="status">登录状态：{{isLogin}}</text>
+  </view>
+
+  <button bindtap="effect">异步分发，毫秒：{{timeout}}</button>
+  <button bindtap="count">count：{{count}} + 2 = 计算属性：{{countComputed}}</button>
+  <button bindtap="toAlbumDetail">toAlbumDetail</button>
+  <e group-name="categories-e-1"></e>
+
+</view>

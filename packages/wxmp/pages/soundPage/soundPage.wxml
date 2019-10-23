@@ -1,0 +1,13 @@
+<view class="container">
+  <view class="tips">
+    <text class="status">登录状态：{{isLogin}}</text>
+  </view>
+  <button bindtap="toMyPage">toMyPage</button>
+  <button bindtap="play">play</button>
+  <button bindtap="pause">pause</button>
+  <view class="tips">
+    <text class="status">播放状态：{{status}}, </text>
+    <text class="status">时长：{{durationComputed}}, </text>
+    <text class="status">当前：{{currentTimeComputed}}</text>
+  </view>
+</view>

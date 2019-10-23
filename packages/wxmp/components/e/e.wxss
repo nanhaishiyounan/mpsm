@@ -1,0 +1,23 @@
+.container {
+  padding: 10rpx;
+  background: #ff6c96;
+  margin: 0 40rpx 40rpx;
+}
+.tips {
+  font-size: 28rpx;
+  color: #000;
+  background: #eee;
+  margin: 10rpx;
+  text-align: left;
+}
+.login-status {
+  font-weight: bold;
+}
+.name-status {
+  font-weight: bold;
+}
+.button {
+  display: block;
+  margin: 10rpx;
+  padding: 0;
+}

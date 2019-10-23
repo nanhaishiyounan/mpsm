@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "b": "/components/b/b",
+    "c": "/components/c/c"
+  }
+}

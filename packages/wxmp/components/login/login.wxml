@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="tips">
+    <text class="login-status">登录状态：{{isLogin}}</text>
+  </view>
+  <button class="button" bindtap="login">登录 or 退出</button>
+  <button class="button" bindtap="loginNotLazy">全局登录 or 退出</button>
+</view>

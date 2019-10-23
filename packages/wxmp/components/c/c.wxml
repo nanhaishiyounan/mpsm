@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="tips">
+    <text class="login-status">登陆状态：{{isLogin}}</text>
+  </view>
+  <view class="tips">
+    <text class="name-status">这是组件C</text>
+  </view>
+  <view class="tips">
+    <text class="name-status">名称C：{{name}}</text>
+  </view>
+  <view class="tips">
+    <text class="name-status">页面数据：{{groupData.index.c}}</text>
+  </view>
+  <view class="tips">
+    <text class="name-status">圈子其他组件：A: {{nameA}}, B: {{nameB}}, D: {{nameD}},</text>
+  </view>
+  <button class="button" bindtap="changeMyName">更新名称C</button>
+  <d group-name="{{groupName}}"
+     group-keys="{{({name: 'nameD'})}}"
+     group-data="{{groupData}}"
+  ></d>
+
+</view>

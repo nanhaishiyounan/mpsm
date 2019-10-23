@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="tips">
+    <text class="login-status">登陆状态：{{isLogin}}</text>
+  </view>
+  <view class="tips">
+    <text class="name-status">这是组件E</text>
+  </view>
+  <view class="tips">
+    <text class="name-status">名称D：{{name}}</text>
+  </view>
+
+  <view class="tips">
+    <text class="name-status">监听页面滚动：{{scrollTop}}</text>
+  </view>
+  <button class="button" bindtap="changeMyName">更新名称E</button>
+</view>

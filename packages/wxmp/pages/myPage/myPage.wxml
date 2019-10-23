@@ -1,0 +1,11 @@
+<view class="container">
+  <view class="tips">
+    <text class="status">登录状态：{{isLogin}}</text>
+  </view>
+
+  <button bindtap="login">登录 or 退出</button>
+  <button bindtap="loginNotLazy">全量更新登录状态</button>
+  <button bindtap="unsubscribeHistory">取消history监听</button>
+  <button bindtap="subscribeHistory">再次history监听</button>
+
+</view>

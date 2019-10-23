@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/categories/categories",
+    "pages/myPage/myPage",
+    "pages/albumDetail/albumDetail",
+    "pages/soundPage/soundPage"
+  ],
+
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "小程序状态管理mpsm",
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": false,
+    "backgroundColor": "#f8f8f8"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#F86442",
+    "backgroundColor": "#fff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "./images/btn_tab_home_n@2x.png",
+        "selectedIconPath": "./images/btn_tab_home_p@2x.png"
+      },
+      {
+        "pagePath": "pages/categories/categories",
+        "text": "分类",
+        "iconPath": "./images/btn_tab_classify_n@2x.png",
+        "selectedIconPath": "./images/btn_tab_classify_p@2x.png"
+      },
+
+      {
+        "pagePath": "pages/myPage/myPage",
+        "text": "我的",
+        "iconPath": "./images/btn_tab_profile_n@2x.png",
+        "selectedIconPath": "./images/btn_tab_profile_p@2x.png"
+      }
+    ]
+  },
+  "requiredBackgroundModes": [
+    "audio"
+  ],
+  "navigateToMiniProgramAppIdList": [],
+  "sitemapLocation": "sitemap.json"
+}
