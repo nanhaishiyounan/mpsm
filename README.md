@@ -28,10 +28,10 @@ page({ //component
 import {dispatch, page, component} from '../../mpsm/index
 
 page({ // 或者 component
-	watch: {
-		isLogin(newState, oldState) {
-			console.log(newState, oldState)
-		}
+    watch: {
+        isLogin(newState, oldState) {
+        console.log(newState, oldState)
+    }
 	},
 	computed: {
 		countComputed(data) {
