@@ -14,6 +14,7 @@
 完全兼容原生代码，已有的业务逻辑代码，即便不适配也可使用此库，不影响已有业务逻辑。
 ### 小尾巴
 **小**：即只需将Page、Component首字母小写。
+
 **尾巴**：即尾部多调用一次：
 ```javascript
 page({ //component
@@ -21,8 +22,8 @@ page({ //component
 })()
 
 ```
-
-#### 页面注册、组件注册示例
+  
+### 页面注册、组件注册示例
 ```javascript
 import {dispatch, page, component} from '../../mpsm/index
 
@@ -36,7 +37,7 @@ page({ // 或者 component
 		countComputed(data) {
 			return data.count * 2
 		}
-	}
+	},
 	data:{
 		count: 0
 	},
@@ -48,7 +49,7 @@ page({ // 或者 component
 				isLogin: true
 			}
 		})
-	}，
+	},
 	localState() {
 		this.dispatch({
 			type: 'group/nameA',
@@ -73,11 +74,59 @@ page({ // 或者 component
 2. Page和Component实例内置this.dispatch方法，用于分发局部状态。
 
 
-### 绘制表格 Tables
+### models 全局状态
+```javascript
+export default {
+  namespace: '',
+  state: {
+    
+  },
+  subscriptions: {
 
-| 项目        | 价格   |  数量  |
+  },
+  effects: {
+
+  },
+  reducers: {
+
+  }
+
+}
+
+```
+
+### model 属性
+详情参阅 [dva](https://dvajs.com/ "dva")
+
+| 属性        | 说明   |  备注  |
 | --------   | -----:  | :----:  |
-| 计算机      | $1600   |   5     |
-| 手机        |   $12   |   12   |
-| 管线        |    $1    |  234  |
+| namespace      | 命名空间   |   必须     |
+| state        |   状态   |   object   |
+| subscriptions  |    单一数据源的订阅     |  可返回函数或数组函数  |
+| effects  |    可进行一些异步操作     |    |
+| reducers  |    纯函数     |    |
+
+### model 方法
+详情参阅 [dva](https://dvajs.com/ "dva")
+
+##### select、put、history
+
+##### tips:
+1. put只用于model内部的action分发，未封装put.resolve等方法，可使用async/await实现同等效果；
+2. 依据小程序特性，history回调中两个参数分别为当前页面路由信息和上一页路由信息，为一个对象，格式如。
+
+```javascript
+const callback = (current, prev) => {
+        dispatch({
+          type: 'save',
+          payload: {
+            prev, // {route: 'pages/index/index',options: {id: 123}}
+            current
+          }
+        })
+      }
+history.listen(callback)
+```
+
+
 
