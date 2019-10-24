@@ -1,7 +1,31 @@
 {
+  "name": "mpsm",
+  "version": "1.0.1",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack --config webpack.config.js"
   },
+  "description": "原生小程序状态管理",
+  "main": "./dist/mpsm.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nanhaishiyounan/mpsm.git"
+  },
+  "keywords": [
+    "小程序",
+    "状态",
+    "管理",
+    "全局状态",
+    "组件",
+    "原生",
+    "圈子",
+    "dva",
+    "redux",
+    "dispatch",
+    "diff"
+  ],
+  "author": "",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
@@ -9,6 +33,8 @@
     "babel-jest": "^24.9.0",
     "babel-preset-env": "^1.7.0",
     "jest": "^24.9.0",
-    "regenerator-runtime": "^0.13.3"
+    "regenerator-runtime": "^0.13.3",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9"
   }
 }
