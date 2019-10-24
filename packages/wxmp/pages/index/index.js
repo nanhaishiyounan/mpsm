@@ -22,7 +22,7 @@ page({
     }
   },
   onLoad() {
-    getIndexAlbums().then(albums => console.log('albums'))
+    // getIndexAlbums().then(albums => console.log(albums))
   },
   onShow() {
     console.log('上一页路由', this.data.prev)

@@ -1,7 +1,8 @@
-import models from "../models/index";
 import {clone, isArray, isFunction, isObject, prefix} from "./util"
 import {put} from "./dispatch"
 import {history} from "./history"
+
+let models = []
 
 export function select(target) {
   let result = {}
@@ -80,4 +81,8 @@ export function selectGroup(target) {
   }
   const groupName = target.data.groupName
   return clone(target[prefix]._page[prefix]._groups[groupName] || {})
+}
+
+export function setModels(m) {
+  models = m
 }

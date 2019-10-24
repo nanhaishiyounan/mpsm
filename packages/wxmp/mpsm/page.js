@@ -1,7 +1,7 @@
 import {clone, mergeOps, isFunction, isObject, mergeData, isUndefined, isArray, prefix} from "./util"
-import {initModelsSubscriptions} from "./model"
+import {setModels, initModelsSubscriptions} from "./model"
 import {defaultOps, defaultComponentOps} from "./defaultOps"
-import diff, {splitKey} from "./diff";
+import diff from "./diff";
 
 export let COMMON_OPS = {}
 export let COMMON_COMPONENT_OPS = {}
@@ -37,11 +37,12 @@ export function component(ops) {
   return page(ops, true)
 }
 
-page.init = function (commonOps = {}, commonComponentOps = {}) {
+page.init = function (models = [], commonOps = {}, commonComponentOps = {}) {
   commonOps = mergeOps(defaultOps, commonOps)
   commonComponentOps = mergeOps(defaultComponentOps, commonComponentOps)
   COMMON_OPS = commonOps
   COMMON_COMPONENT_OPS = commonComponentOps
+  setModels(models)
   initModelsSubscriptions()
 }
 
