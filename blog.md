@@ -1,6 +1,5 @@
 # 原生小程序状态管理: mpsm
 
-
 **具备vue+react开发体验**
 
 将[dvajs](https://dvajs.com/ "dva")的models状态管理模式，
@@ -16,6 +15,7 @@ react数据批量更新的特点，以及vue的watch和computed特性，
 ## 使用介绍
 完全兼容原生代码，已有的业务逻辑代码，即便不适配也可使用此库，不影响已有业务逻辑。
 ### 初始化
+
 
 ```javascript
 //app.js
@@ -209,7 +209,7 @@ export default {
 而对于小程序的原生组件系统来说，behaviors, relations, definitionFilter, triggerEvent, 
 getRelationNodes等编写组件需要使用的属性或方法，
 真的是辣眼睛！小程序官方组件系统基本丧失了作为组件的意义，
-虽然它还在努力地更新升级，
+它还在努力地更新升级，
 时不时文档中出现`"不推荐使用这个字段，而是使用另一个字段代替，它更加强大且性能更好"`的字眼。
 
 更大更好？？？我要是没使用过你的这些api，我差点就信了！！！！
