@@ -18,8 +18,8 @@
 ```javascript
 //app.js
 
-import {page} from '/mpsm/index'
-import models from '/models/index'
+import {page} from './mpsm/index'
+import models from './models/index'
 
 page.init(models, {}, {})
 
@@ -48,7 +48,7 @@ page({ //component
 | subscribe  |    订阅单一数据源     |  参数: 'userInfo/setup'  |
 | unsubscribe  |    取消订阅单一数据源     |  参数: 'userInfo/setup'  |
 
-#### 单一数据源的订阅取消
+##### 单一数据源的订阅取消
 
 方法： unsubscribe, subscribe
 
@@ -64,51 +64,68 @@ unsubscribe('userInfo/setup');
 import {dispatch, page, component} from '../../mpsm/index'
 
 page({ // 或者 component
-    watch: {
-        isLogin(newState, oldState) {
-        console.log(newState, oldState)
+  watch: {
+    isLogin(newState, oldState) {
     }
-	},
-	computed: {
-		countComputed(data) {
-			return data.count * 2
-		}
-	},
-	data:{
-		count: 0
-	},
-	onLoad(){},
-	login() {
-		dispatch({
-			type: 'userInfo/save',
-			payload: {
-				isLogin: true
-			}
-		})
-	},
-	localState() {
-		this.dispatch({
-			type: 'group/nameA',
-			payload: {
-				name: 'A_component'
-			}
-		})
-	}
+  },
+  computed: {
+    countComputed(data) {
+      return data.count * 2
+    }
+  },
+  data: {
+    count: 2
+  },
+  onLoad() {},
+  login() {
+    dispatch({
+      type: 'userInfo/save',
+      payload: {
+        isLogin: true
+      }
+    })
+  },
+  changeGroupState() {
+    this.dispatch({
+      type: 'group/index-a-1',
+      payload: {
+        nameA: 'name'
+      }
+    })
+  },
+
 })(({userInfo}) => {//订阅全局状态
-	return {
-		isLogin: userInfo.isLogin
-	}
-}, (groups) => {//订阅局部状态
-	return {
-		nameA: groups.nameA && groups.nameA.name || '--'
-	}
+  return {
+    isLogin: userInfo.isLogin
+  }
+}, (groups) => {//订阅圈子状态
+  return {
+    nameA: groups.nameA && groups.nameA.name || '--'
+  }
 })
 ```
 
 ##### tips:
 1. dispatch用于分发全局状态，风格与dva保持一致；
 2. Page和Component实例内置this.dispatch方法，用于分发局部状态。
+3、组件可监听page的生命周期函数，无需做版本兼容，只需将想要监听的函数名与page内一直即可，即
 
+```javascript
+// 原生的pageLifetimes可监听的周期太少，且版本要求高，监听了onShow，就不需要监听show了，避免执行两次
+component({
+  pageLifetimes: {
+      onShow: function () { },
+      onHide: function () { },
+      onPageScroll: function () { },
+    },
+})()
+
+```
+目前可监听的生命周期 `['onShow', 'onHide', 'onResize', 'onPageScroll', 'onTabItemTap', 'onPullDownRefresh', 'onReachBottom']`
+
+有了这个功能，就可以编写很多自控组件了，比如吸顶效果的导航栏等。
+
+### models 全局状态
 
 ### models 全局状态
 ```javascript
@@ -138,7 +155,7 @@ export default {
 | --------   | -----:  | :----:  |
 | namespace      | 命名空间   |   必须     |
 | state        |   状态   |   object   |
-| subscriptions  |    单一数据源的订阅,page.init时执行     |  参数{dispatch, history, select}  |
+| subscriptions  |    单一数据源的订阅,page.init时执行, 暂不具备done参数    |  参数{dispatch, history, select}  |
 | effects  |    可进行一些异步操作     |    |
 | reducers  |    纯函数     |    |
 
@@ -233,6 +250,11 @@ getRelationNodes等编写组件需要使用的属性或方法，
 
 ## 页面、组件实例对象
 
+**注意：** 对配置中的函数，以及setData进行了简单封装，在页面注册或组件注册的函数中，
+setData的数据并不会马上更新，而是合并收集，待当前函数执行完毕后，
+先模拟计算出computed，与收集的结果合并，再diff，最后setData一次。
+与react更新机制类似，对于函数中出现的异步操作，不会进行数据收集，而是直接模拟计算值，diff，接着setData
+
 ### 页面
 对圈子状态的管理拥有最高权限
 #### 属性
@@ -293,3 +315,65 @@ getRelationNodes等编写组件需要使用的属性或方法，
 | payload      |  需要更新的状态值 |   object     |
 
 ## 状态更新机制
+![状态更新机制](https://user-gold-cdn.xitu.io/2019/10/24/16dfd30648e2419a?imageView2/2/w/480/h/480/q/85/interlace/1  "状态更新机制")
+
+### 定制diff
+
+腾讯官方的westore库，为小程序定制了一个diff，本想用在自己库里，
+但使用中发现diff结果不太对，他会将删除的属性值重置为null，我并不需要为null，
+当去遍历对象的属性值，就会多出一个为null的属性，莫名其妙，删了就是删了，不必再保留，
+并且其内部实现，在进行diff前先进行一次同步下key键，这个完全没必要，浪费性能。
+westore的diff应该是用在全局状态新旧状态上，其结果违反setData的数据拼接规则，
+也不符合原生数据更新的习惯，
+所以我得自己写一个diff，先列出基本情况：
+
+1、不改变原生setData的使用习惯；
+
+2、明确diff使用的场景，针对具体场景定制：属性更新时需要diff，setData时需要diff；
+
+3、diff返回结果的格式，setData会用到，需要满足 `a.b[0].a`这样的格式，另外如果属性变化，还需要根据键值调用watch；
+
+4、参与对比的两个参数都有一个共同特点，就是都是拿局部变化的数据，去对比全量旧数据，属性的话，两者的键值对更是对等的，所以无需同步键值；
+
+定制的diff：
+
+```javascript
+   diff({
+       a: 1, b: 2, c: "str", d: { e: [2, { a: 4 }, 5] }, f: true, h: [1], g: { a: [1, 2], j: 111 }
+   }, {
+       a: [], b: "aa", c: 3, d: { e: [3, { a: 3 }] }, f: false, h: [1, 2], g: { a: [1, 1, 1], i: "delete" }, k: 'del'
+   })
+```
+
+diff结果
+
+```javascript
+   const diffResult = {
+    result: {
+      a: 1,
+      b: 2,
+      c: "str",
+      'd.e[0]': 2,
+      'd.e[1].a': 4,
+      'd.e[2]': 5,
+      f: true,
+      g: {
+        a: [1,2],
+        j: 111
+      },
+      h: [1]
+    },
+    rootKeys: {
+      a: true,
+      b: true,
+      c: true,
+      d: true,
+      g: true,
+      h: true,
+    }
+   }
+```
+记录rootKeys是因为属性不支持 'a.b'这样的格式，在diff中记录下来，便少了一次遍历筛选拆分。
+
+#### tips
+对于属性键值为数字的，会判断为数组，不要用数字来做对象的键名！
