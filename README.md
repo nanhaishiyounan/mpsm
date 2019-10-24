@@ -100,7 +100,7 @@ page({ // 或者 component
   return {
     isLogin: userInfo.isLogin
   }
-}, (groups) => {//订阅圈子状态
+}, (groups) => {//订阅圈子状态,page为全局圈子，component为组件所在圈子
   return {
     nameA: groups.nameA && groups.nameA.name || '--'
   }
