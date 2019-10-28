@@ -84,13 +84,15 @@ export function mergeOps(firstOps = {},secondOps = {}) {
 
 export function mergeData(changedData, oldData) {
   Object.keys(changedData).forEach(key => {
-    const kArr = (key + '[]').split(/\.|\[|\]\[|\]\./g)
+  	const reg = /\.|\[|\]\[|\]\./g
+    const kArr = (key + '[]').split(reg)
+    const path = (key + '[]').match(reg)
     kArr.pop()
     kArr.reduce((t, k, i, arr) => {
       if (i === arr.length -1) {
         t[k] = changedData[key]
       } else if (!isObject(t[k]) && !isArray(t[k])) {
-        t[k] = /^\d+$/.test(arr[i + 1]) ? [] : {}
+        t[k] = path[i] === '.' ? {} : []
       }
       return t[k]
     }, oldData)
