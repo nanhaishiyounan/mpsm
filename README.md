@@ -9,7 +9,7 @@
 ## 数据流
 不管是页面间，还是组件间，嵌套组件内部，都可以通过简单的dispach来管理全局状态或圈子状态（局部）。
 
-![数据流](https://user-gold-cdn.xitu.io/2019/10/24/16df9a1edd38f465?imageView2/2/w/480/h/480/q/85/interlace/1 "数据流")
+![全局数据流](https://user-gold-cdn.xitu.io/2019/10/25/16e013c7e1e84069?imageView2/2/w/480/h/480/q/85/interlace/1 "全局数据流")
 
 ![圈子数据流](https://user-gold-cdn.xitu.io/2019/10/24/16dfc5f8b87c973c?imageView2/2/w/480/h/480/q/85/interlace/1 "圈子数据流")
 

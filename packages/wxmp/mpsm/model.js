@@ -77,7 +77,7 @@ export function updateStateGroup(groups, groupName, state) {
 
 export function selectGroup(target) {
   if (!target[prefix]._isComponent) {
-    return target.$groups
+    return clone(target[prefix]._groups || {})
   }
   const groupName = target.data.groupName
   return clone(target[prefix]._page[prefix]._groups[groupName] || {})
