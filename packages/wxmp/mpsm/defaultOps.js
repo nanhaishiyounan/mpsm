@@ -53,6 +53,7 @@ const defaultComponentLifetimes = {
     this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
     add$groupsToThis(this)
     add$groupToThis(this)
+    add$pageToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -180,6 +181,16 @@ function add$groupToThis(context) {
       } else {
         return {}
       }
+    },
+    enumerable : false,
+    configurable : false
+  })
+}
+
+function add$pageToThis(context) {
+  Object.defineProperty(context, "$page", {
+    get : function(){
+      return this[prefix]._page
     },
     enumerable : false,
     configurable : false
