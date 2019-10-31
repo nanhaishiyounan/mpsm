@@ -108,7 +108,7 @@ function genPageLifetimes() {
 
 function mapComponentsOnPageLifetimes(components, lifetimeName, arg) {
   components.forEach(component => {
-    if (!isObject(component[prefix]._pageLifetimes) ||
+    if (!component || !isObject(component[prefix]._pageLifetimes) ||
       !isFunction(component[prefix]._pageLifetimes[lifetimeName])) {
       return
     }
