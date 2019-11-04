@@ -18,8 +18,9 @@ export function page(ops, isComponent = false) {
     ops[prefix] = {
       _mapPropsToData: mapPropsToData,
       _mapGroupToData: mapGroupToData,
-      _computed: ops.computed,
+      _computed: ops.computed || {},
       _propsWatch: ops.watch || {},
+      _propsValue: {},
     }
 
     delete ops.watch

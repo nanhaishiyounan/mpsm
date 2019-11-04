@@ -25,6 +25,7 @@ export const defaultOps = {
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
+    initDataToComputed(this)
     notifyHistoryListen()
   },
   onUnload() {
@@ -57,6 +58,7 @@ const defaultComponentLifetimes = {
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
+    initDataToComputed(this)
   },
   detached() {
     this[prefix]._page[prefix]._components[this[prefix]._indexOfComponents] = null
@@ -147,8 +149,28 @@ function initGroupToProps(context) {
   }
 }
 
+function initDataToComputed(context) {
+  const props = context[prefix]._propsValue
+  const computed = context[prefix]._computed
+  if (!isObject(props) ||  Object.keys(props).length === 0) {
+    if (isObject(computed) &&
+      Object.keys(computed).length
+    ) {
+      const computedResult = {}
+      Object.keys(computed).forEach(key => {
+        if (!isFunction(computed[key])) {
+          return
+        }
+        computedResult[key] = computed[key](clone(context.data || {}))
+      })
+      context.setData(computedResult)
+    }
+  }
+}
+
 function initPropsToData(context) {
-  context.setData(context[prefix]._propsValue)
+  const props = context[prefix]._propsValue
+  context.setData(props)
 }
 
 function add$groupsToThis(context) {
