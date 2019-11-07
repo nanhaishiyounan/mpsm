@@ -16,6 +16,7 @@ export const defaultOps = {
     _components: [],
     _groupNamesNeedUpdate: [],
     _firstOnShow: true,
+    _lifetimes: {}
   },
 
   onLoad() {
@@ -52,6 +53,7 @@ const defaultComponentLifetimes = {
   attached() {
     this[prefix]._page = currPage()
     this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
+    subscribePageLifetimes(this[prefix]._page, this)
     add$groupsToThis(this)
     add$groupToThis(this)
     add$pageToThis(this)
@@ -98,17 +100,37 @@ function genPageLifetimes() {
         if (this[prefix]._groupNamesNeedUpdate.length) {
           performTransaction(this, this[prefix]._groupNamesNeedUpdate)
         }
-        mapComponentsOnPageLifetimes(this[prefix]._components, name, arguments)
+        const components = this[prefix]._lifetimes[name]
+        if (!components) {
+          return
+        }
+        mapComponentsOnPageLifetimes(components, name, arguments)
       }
     } else {
       lifetimes[name] = function () {
-        mapComponentsOnPageLifetimes(this[prefix]._components, name, arguments)
+        const components = this[prefix]._lifetimes[name]
+        if (!components) {
+          return
+        }
+        mapComponentsOnPageLifetimes(components, name, arguments)
       }
     }
   })
   return lifetimes
 }
-
+function subscribePageLifetimes(pageIns, componentIns) {
+  const componentLifetimes = componentIns[prefix]._pageLifetimes
+  const lifetimes = pageIns[prefix]._lifetimes
+  if (!isObject(componentLifetimes)) {
+    return
+  }
+  Object.keys(componentLifetimes).forEach(lifetimeName => {
+    if (!lifetimes[lifetimeName]) {
+      lifetimes[lifetimeName] = []
+    }
+    lifetimes[lifetimeName].push(componentIns)
+  })
+}
 function mapComponentsOnPageLifetimes(components, lifetimeName, arg) {
   components.forEach(component => {
     if (!component || !isObject(component[prefix]._pageLifetimes) ||
