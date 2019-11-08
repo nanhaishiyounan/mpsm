@@ -23,6 +23,7 @@ export const defaultOps = {
     this.dispatch = dispatchGroup
     add$groupsToThis(this)
     addPage(this)
+    add$setDataToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -57,6 +58,7 @@ const defaultComponentLifetimes = {
     add$groupsToThis(this)
     add$groupToThis(this)
     add$pageToThis(this)
+    add$setDataToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -235,6 +237,16 @@ function add$pageToThis(context) {
   Object.defineProperty(context, "$page", {
     get : function(){
       return this[prefix]._page
+    },
+    enumerable : false,
+    configurable : false
+  })
+}
+
+function add$setDataToThis(context) {
+  Object.defineProperty(context, "$setData", {
+    get : function(){
+      return this[prefix]._originSetData
     },
     enumerable : false,
     configurable : false
