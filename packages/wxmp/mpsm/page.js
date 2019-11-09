@@ -1,7 +1,7 @@
 import {clone, mergeOps, isFunction, isObject, mergeData, isUndefined, isArray, prefix} from "./util"
 import {setModels, initModelsSubscriptions} from "./model"
 import {defaultOps, defaultComponentOps} from "./defaultOps"
-import diff from "./diff";
+import diff from "./diff"
 
 export let COMMON_OPS = {}
 export let COMMON_COMPONENT_OPS = {}
@@ -119,21 +119,22 @@ export function wrapSetData(context) {
     }
 
     let computedResult = {}
-    let cloneThisData = this.$data
+
     const computed = this[prefix]._computed
     if (isObject(computed) && Object.keys(computed).length > 0) {
+      let cloneThisData = clone(this.data)
       let cloneData = clone(data)
       const newData = mergeData(cloneData, cloneThisData)
       computedResult = getComputed(this, newData)
     }
 
-    const {result, rootKeys} = diff({...data, ...computedResult}, cloneThisData)
+    const {result, rootKeys} = diff({...data, ...computedResult}, this[prefix]._cloneData)
 
     if (Object.keys(result).length === 0) {
       return rootKeys
     }
     originSetData.call(this, result, arguments[1])
-    this[prefix]._cloneData = clone(this.data)
+    mergeData(result, this[prefix]._cloneData)
     return rootKeys
   }
   context[prefix]._hasWrapSetData = true

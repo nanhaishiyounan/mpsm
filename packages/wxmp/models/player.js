@@ -25,7 +25,6 @@ export default {
         'onEnded',
       ]
       statusCallbacks.forEach((cb, index) => audioManager[cb](() => {
-        let duration = 0
         if (cb === 'onPlay') {
           dispatch({
             type: 'save',
@@ -36,6 +35,7 @@ export default {
           })
           return
         }
+
         dispatch({
           type: 'save',
           payload: {
@@ -52,7 +52,6 @@ export default {
         ) {
           return
         }
-        console.log('onTimeUpdate')
         dispatch({
           type: 'save',
           payload: {

@@ -21,10 +21,6 @@ export function dispatch({type, payload, lazy = true}) {
   }
   if (model.reducers && model.reducers[reducer]) {
     const state = model.reducers[reducer](oldState, {type, payload})
-    if (!isObject(state)) {
-      console.error(`reducers[${reducer}] must return a object!`)
-      return
-    }
     updateState(model, state)
     notify(lazy)
   }

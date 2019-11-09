@@ -22,7 +22,7 @@ export const defaultOps = {
 
   onLoad() {
     this.dispatch = dispatchGroup
-		cloneData(this)
+    initCloneData(this)
     add$groupsToThis(this)
     addPage(this)
     add$setDataToThis(this)
@@ -59,7 +59,7 @@ const defaultComponentLifetimes = {
     this[prefix]._page = currPage()
     this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
     subscribePageLifetimes(this[prefix]._page, this)
-		cloneData(this)
+    initCloneData(this)
     add$groupsToThis(this)
     add$groupToThis(this)
     add$pageToThis(this)
@@ -179,6 +179,14 @@ function initGroupToProps(context) {
   }
 }
 
+function initPropsToData(context) {
+  const props = context[prefix]._propsValue
+  context.setData(props)
+}
+function initCloneData(context) {
+  context[prefix]._cloneData = clone(context.data)
+}
+
 function initDataToComputed(context) {
   const props = context[prefix]._propsValue
   const computed = context[prefix]._computed
@@ -196,14 +204,6 @@ function initDataToComputed(context) {
       context.setData(computedResult)
     }
   }
-}
-
-function initPropsToData(context) {
-  const props = context[prefix]._propsValue
-  context.setData(props)
-}
-function cloneData(context) {
-	context[prefix]._cloneData = clone(context.data)
 }
 function add$groupsToThis(context) {
   Object.defineProperty(context, "$groups", {

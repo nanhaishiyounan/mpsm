@@ -1,20 +1,19 @@
-import {clone, isArray, isFunction, isObject, prefix} from "./util"
+import {clone, isArray, isFunction, isObject, isString, prefix} from "./util"
 import {put} from "./dispatch"
 import {history} from "./history"
 
 let models = []
+let modelsState = {}
 
 export function select(target) {
-  let result = {}
-  for (let i = 0;i < models.length; i++) {
-    if (models[i].namespace === target) {
-      return  models[i]
-    } else {
-      result[models[i].namespace] = models[i].state
+  if (isString(target)) {
+    for (let i = 0;i < models.length; i++) {
+      if (models[i].namespace === target) {
+        return  models[i]
+      }
     }
   }
-  result = clone(result)
-  return isFunction(target) ? target(result) : result
+  return isFunction(target) ? target(modelsState) : modelsState
 }
 
 export const unsubscriptionFuns = {}
@@ -69,6 +68,7 @@ export function subscribe(path) {
 
 export function updateState(model, state) {
   model.state = state
+  modelsState[model.namespace] = state
 }
 
 export function updateStateGroup(groups, groupName, state) {
@@ -85,4 +85,12 @@ export function selectGroup(target) {
 
 export function setModels(m) {
   models = m
+  initModelsState(models, modelsState)
+}
+
+
+export function initModelsState(models, modelsState) {
+  for (let i = 0;i < models.length; i++) {
+    modelsState[models[i].namespace] = models[i].state
+  }
 }
