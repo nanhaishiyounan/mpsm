@@ -246,7 +246,7 @@ function add$pageToThis(context) {
 function add$setDataToThis(context) {
   Object.defineProperty(context, "$setData", {
     get : function(){
-      return this[prefix]._originSetData
+      return this[prefix]._wrapSetData
     },
     enumerable : false,
     configurable : false
