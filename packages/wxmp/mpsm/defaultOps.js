@@ -16,14 +16,17 @@ export const defaultOps = {
     _components: [],
     _groupNamesNeedUpdate: [],
     _firstOnShow: true,
-    _lifetimes: {}
+    _lifetimes: {},
+		_cloneData: {},
   },
 
   onLoad() {
     this.dispatch = dispatchGroup
+		cloneData(this)
     add$groupsToThis(this)
     addPage(this)
     add$setDataToThis(this)
+		add$dataToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -48,6 +51,7 @@ const defaultComponentLifetimes = {
       _components: [],
       _isComponent: true,
       _hasWrapSetData: false,
+      _cloneData: {},
     }
     this.dispatch = dispatchGroup
   },
@@ -55,10 +59,12 @@ const defaultComponentLifetimes = {
     this[prefix]._page = currPage()
     this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
     subscribePageLifetimes(this[prefix]._page, this)
+		cloneData(this)
     add$groupsToThis(this)
     add$groupToThis(this)
     add$pageToThis(this)
     add$setDataToThis(this)
+		add$dataToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -196,7 +202,9 @@ function initPropsToData(context) {
   const props = context[prefix]._propsValue
   context.setData(props)
 }
-
+function cloneData(context) {
+	context[prefix]._cloneData = clone(context.data)
+}
 function add$groupsToThis(context) {
   Object.defineProperty(context, "$groups", {
     get : function(){
@@ -251,6 +259,15 @@ function add$setDataToThis(context) {
     enumerable : false,
     configurable : false
   })
+}
+function add$dataToThis(context) {
+	Object.defineProperty(context, "$data", {
+		get : function(){
+			return this[prefix]._cloneData
+		},
+		enumerable : false,
+		configurable : false
+	})
 }
 
 

@@ -8,6 +8,8 @@ const STRINGTYPE = '[object String]'
 const NUMBERTYPE = '[object Number]'
 const ASYNCTYPE = '[object AsyncFunction]'
 const GENERATORTYPE = '[object GeneratorFunction]'
+const DATETYPE = '[object Date]'
+const REGEXPTYPE = '[object RegExp]'
 
 function type(obj) {
   return Object.prototype.toString.call(obj)
@@ -23,7 +25,12 @@ export function isArray(obj) {
 export function isObject(obj) {
   return is(OBJECTTYPE, obj)
 }
-
+export function isDate(obj) {
+  return is(DATETYPE, obj)
+}
+export function isReg(obj) {
+  return is(REGEXPTYPE, obj)
+}
 export function isFunction(obj) {
   return typeof obj === 'function'
 }
@@ -121,7 +128,16 @@ export function currPage() {
 }
 
 export function clone(obj) {
-  return JSON.parse(JSON.stringify(obj))
+  if (!isObject(obj) && !isArray(obj)) {
+    return obj
+  }
+  const cloneObj ={}
+  for(let key in obj) {
+    if(obj.hasOwnProperty(key)) {
+      cloneObj[key] = (isObject(obj[key]) || isArray(obj[key])) ? clone(obj[key]) : obj[key]
+    }
+  }
+  return cloneObj
 }
 
 export const prefix = '_mpsm_'

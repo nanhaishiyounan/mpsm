@@ -1,7 +1,7 @@
 <!--index.wxml-->
 <view class="container">
   <view class="tips">
-    <text class="status">登录状态：{{isLogin}}</text>
+    <text class="status">登录状态：{{isLogin}}{{a.a[0].a}}</text>
   </view>
 
   <button bindtap="toAlbumDetail">toAlbumDetail</button>

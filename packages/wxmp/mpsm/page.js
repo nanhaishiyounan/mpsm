@@ -110,25 +110,30 @@ function wrapFunction(fn) {
 
 export function wrapSetData(context) {
   const originSetData = context.setData
-  context.setData = function (data = {}) {
+  context.setData = function (data) {
+    if (!isObject(arguments[0])) {
+      data = this.data
+    }
     if (!isObject(data) || Object.keys(data).length === 0) {
       return
     }
 
     let computedResult = {}
-    if (isObject(this[prefix]._computed) && Object.keys(this[prefix]._computed).length > 0) {
-      let cloneThisData = clone(this.data)
+    let cloneThisData = this.$data
+    const computed = this[prefix]._computed
+    if (isObject(computed) && Object.keys(computed).length > 0) {
       let cloneData = clone(data)
       const newData = mergeData(cloneData, cloneThisData)
       computedResult = getComputed(this, newData)
     }
 
-    const {result, rootKeys} = diff({...data, ...computedResult}, this.data)
+    const {result, rootKeys} = diff({...data, ...computedResult}, cloneThisData)
 
     if (Object.keys(result).length === 0) {
       return rootKeys
     }
     originSetData.call(this, result, arguments[1])
+    this[prefix]._cloneData = clone(this.data)
     return rootKeys
   }
   context[prefix]._hasWrapSetData = true
