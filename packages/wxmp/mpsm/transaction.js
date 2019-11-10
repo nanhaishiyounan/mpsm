@@ -1,4 +1,4 @@
-import {clone, isArray, isFunction, isObject, prefix, canWriteSetData} from "./util"
+import {clone, isArray, isFunction, isObject, prefix} from "./util"
 import {select, selectGroup} from "./model"
 import diff from "./diff"
 
@@ -48,8 +48,7 @@ export function updatePropsAndData(context, newProps) {
   }
   context[prefix]._propsValue = {...context[prefix]._propsValue, ...newProps}
 
-  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-  const rootKeys = context[setDataKey](result)
+  const rootKeys = context[prefix]._wrapSetData.call(context, result)
 
   if (!isObject(rootKeys)) {
     return

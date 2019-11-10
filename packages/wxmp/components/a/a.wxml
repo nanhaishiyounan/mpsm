@@ -1,6 +1,6 @@
 <view class="container">
   <view class="tips">
-    <text class="login-status">登陆状态：{{isLogin}}{{sort}}</text>
+    <text class="login-status">登陆状态：{{isLogin}}{{sort}}-{{sortC}}</text>
   </view>
   <view class="tips">
     <text class="name-status">这是组件A</text>

@@ -8,7 +8,7 @@ import {
   prefix,
   isArray,
   canWriteSetData,
-  isUndefined, isNumber
+  isUndefined, isNumber, mergeData
 } from "./util"
 import {notifyHistoryListen} from "./history"
 import {performTransaction} from "./transaction"
@@ -59,9 +59,11 @@ const defaultComponentLifetimes = {
       _propsWatch: ops[prefix]._propsWatch,
       _propsValue: ops[prefix]._propsValue,
       _computed: ops[prefix]._computed,
+      _properties: ops[prefix]._properties,
       _components: [],
       _isComponent: true,
       _hasWrapSetData: false,
+      _cloneData: {}
     }
     this.dispatch = dispatchGroup
     this.state = {}
@@ -80,6 +82,7 @@ const defaultComponentLifetimes = {
     initGroupToProps(this)
     initPropsToData(this)
     initDataToComputed(this)
+    proxyProperties(this)
   },
   detached() {
     this[prefix]._page[prefix]._components[this[prefix]._indexOfComponents] = null
@@ -201,21 +204,8 @@ function initCloneData(context) {
 
 function initDataToComputed(context) {
   const props = context[prefix]._propsValue
-  const computed = context[prefix]._computed
   if (!isObject(props) ||  Object.keys(props).length === 0) {
-    if (isObject(computed) &&
-      Object.keys(computed).length
-    ) {
-      const computedResult = {}
-      Object.keys(computed).forEach(key => {
-        if (!isFunction(computed[key])) {
-          return
-        }
-        computedResult[key] = computed[key](clone(context.data || {}))
-      })
-      const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-      context[setDataKey](computedResult)
-    }
+    updateComputed(context)
   }
 }
 
@@ -279,9 +269,58 @@ function add$setDataToThis(context) {
 }
 
 function update() {
-  this[prefix]._wrapSetData.call(this, this.state, arguments[0])
-  this.state = {}
+  this[prefix]._wrapSetData.call(this, null, arguments[0])
 }
+
+function proxyProperties(context) {
+  const properties = context[prefix]._properties
+  if (!isObject(properties) ||
+      Object.keys(properties).length === 0
+  ) {
+    return
+  }
+  const keys = Object.keys(properties)
+  console.log('keys', keys)
+  keys.forEach(key => {
+    let _v = context.data[key]
+    Object.defineProperty(context.data, key, {
+      get() {
+        return _v
+      },
+      set(v) {
+        if (v === _v) {
+          return
+        }
+        console.log('v', v)
+
+        _v = v
+        updateComputed(context)
+        return v
+      }
+    })
+  })
+}
+function updateComputed(context) {
+  const computed = context[prefix]._computed
+  if (isObject(computed) &&
+      Object.keys(computed).length
+  ) {
+    const computedResult = {}
+    Object.keys(computed).forEach(key => {
+      if (!isFunction(computed[key])) {
+        return
+      }
+      computedResult[key] = computed[key](clone(context.data || {}))
+      updateCloneData(context, key, computedResult[key])
+    })
+    context[prefix]._originSetData.call(context, computedResult)
+  }
+}
+function updateCloneData(context, propsKey, propValue) {
+  console.log(propsKey, propValue)
+  context[prefix]._cloneData[propsKey] = propValue
+}
+
 
 
 

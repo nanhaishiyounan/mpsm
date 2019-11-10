@@ -22,6 +22,10 @@ page({
     a: {
       a: [{a:1}]
     },
+    sort: 0,
+    gd: {
+      sort: 0
+    }
   },
   onLoad() {
     const {a} = this.data
@@ -29,6 +33,10 @@ page({
     this.state.a.a = []
     this.state.a.a[0] = {}
     this.state.a.a[0].a = 2
+    this.update()
+  },
+  sortCount() {
+    this.data.gd.sort += 1
     this.update()
   },
   onShow() {

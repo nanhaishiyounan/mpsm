@@ -18,7 +18,9 @@ component({
     }
   },
   computed: {
-
+    sortC(data) {
+      return data.sort * 2
+    }
   },
   behaviors: [],
 

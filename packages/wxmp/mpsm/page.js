@@ -63,6 +63,7 @@ function registerPage(ops) {
 
 function registerComponent(ops) {
   ops[prefix]._pageLifetimes = ops.pageLifetimes || {}
+  ops[prefix]._properties = ops.properties || {}
   delete ops.pageLifetimes
   if (isObject(ops.lifetimes)) {
     ops = {...ops, ...ops.lifetimes}
@@ -120,21 +121,22 @@ export function wrapSetData(context) {
     }
 
     let computedResult = {}
-
+    let cloneThisData = this[prefix]._cloneData
     const computed = this[prefix]._computed
     if (isObject(computed) && Object.keys(computed).length > 0) {
-      let cloneThisData = clone(this.data)
-      let cloneData = clone(data)
-      const newData = mergeData(cloneData, cloneThisData)
+      const newData = mergeData(data, clone(cloneThisData))
       computedResult = getComputed(this, newData)
     }
 
-    const {result, rootKeys} = diff({...data, ...computedResult}, this.data)
+    const {result, rootKeys} = diff({...data, ...computedResult}, cloneThisData)
 
     if (Object.keys(result).length === 0) {
       return rootKeys
     }
     originSetData.call(this, result, arguments[1])
+    console.log('result', result)
+    mergeData(result, cloneThisData)
+    console.log('cloneThisData', cloneThisData)
     return rootKeys
   }
   context[prefix]._hasWrapSetData = true
