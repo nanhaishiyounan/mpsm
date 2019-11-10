@@ -128,13 +128,12 @@ export function wrapSetData(context) {
       computedResult = getComputed(this, newData)
     }
 
-    const {result, rootKeys} = diff({...data, ...computedResult}, this[prefix]._cloneData)
+    const {result, rootKeys} = diff({...data, ...computedResult}, this.data)
 
     if (Object.keys(result).length === 0) {
       return rootKeys
     }
     originSetData.call(this, result, arguments[1])
-    mergeData(result, this[prefix]._cloneData)
     return rootKeys
   }
   context[prefix]._hasWrapSetData = true
@@ -149,6 +148,7 @@ function beforeFunction(context, result) {
   if (!context[prefix]._hasWrapSetData) {
     wrapSetData(context)
   }
+
   context.setData = function () {
     if (!isObject(arguments[0])) {
       result.data = context.data

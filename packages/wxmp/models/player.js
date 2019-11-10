@@ -24,7 +24,7 @@ export default {
         'onSeeked',
         'onEnded',
       ]
-      statusCallbacks.forEach((cb, index) => audioManager[cb](() => {
+      statusCallbacks.forEach((cb, index) => audioManager[cb] && audioManager[cb](() => {
         if (cb === 'onPlay') {
           dispatch({
             type: 'save',
@@ -44,12 +44,14 @@ export default {
         })
       }))
 
-      audioManager.onTimeUpdate(throttle(() => {
-        const {userInfo} = select()
-        if (userInfo.current.route === 'pages/index/index' ||
-          userInfo.current.route === 'pages/myPage/myPage' ||
-          userInfo.current.route === 'pages/categories/categories'
+      audioManager.onTimeUpdate(() => {
+        const {userInfo, player} = select()
+        if (userInfo.current.route !== 'pages/albumDetail/albumDetail' &&
+          userInfo.current.route !== 'pages/soundPage/soundPage'
         ) {
+          return
+        }
+        if (parseInt(player.currentTime) === parseInt(audioManager.currentTime)) {
           return
         }
         dispatch({
@@ -58,7 +60,7 @@ export default {
             currentTime: audioManager.currentTime
           }
         })
-      }))
+      })
 
       audioManager.onNext(() => {
 

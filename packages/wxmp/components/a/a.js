@@ -25,7 +25,10 @@ component({
   properties: {
     sort: {
       type: null,
-      value: 0
+      value: 0,
+      observer() {
+        console.log(this)
+      }
     }
   },
 
