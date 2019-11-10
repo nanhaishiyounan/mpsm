@@ -280,7 +280,6 @@ function proxyProperties(context) {
     return
   }
   const keys = Object.keys(properties)
-  console.log('keys', keys)
   keys.forEach(key => {
     let _v = context.data[key]
     Object.defineProperty(context.data, key, {
@@ -291,8 +290,6 @@ function proxyProperties(context) {
         if (v === _v) {
           return
         }
-        console.log('v', v)
-
         _v = v
         updateComputed(context)
         return v

@@ -1,4 +1,4 @@
-import {isObject, isString, isUndefined, prefix} from "./util"
+import {isObject, isString, isUndefined, prefix, canWriteSetData} from "./util"
 import {select, updateState, updateStateGroup} from "./model"
 import notify, {notifyGroup} from "./notify"
 
@@ -57,7 +57,8 @@ export function dispatchGroup({type, payload}) {
     return
   }
   if (updateType === 'data') {
-    this[prefix]._wrapSetData.call(this, payload)
+    const setDataKey = canWriteSetData(this) ? 'setData' : '$setData'
+    this[setDataKey](payload)
   }
 
   if (updateType === 'data' || updateType === 'group') {
