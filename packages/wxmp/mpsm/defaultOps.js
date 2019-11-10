@@ -14,6 +14,7 @@ import {notifyHistoryListen} from "./history"
 import {performTransaction} from "./transaction"
 import {select, selectGroup} from "./model"
 import {dispatchGroup} from "./dispatch"
+import diff from "./diff";
 
 const lifetimesName = ['onShow', 'onHide', 'onResize', 'onPageScroll', 'onTabItemTap', 'onPullDownRefresh', 'onReachBottom']
 
@@ -307,14 +308,14 @@ function updateComputed(context) {
       if (!isFunction(computed[key])) {
         return
       }
-      computedResult[key] = computed[key](clone(context.data || {}))
+      computedResult[key] = computed[key](context.data || {})
       updateCloneData(context, key, computedResult[key])
     })
-    context[prefix]._originSetData.call(context, computedResult)
+    const {result} = diff(computedResult, context.data)
+    context[prefix]._originSetData.call(context, result)
   }
 }
 function updateCloneData(context, propsKey, propValue) {
-  console.log(propsKey, propValue)
   context[prefix]._cloneData[propsKey] = propValue
 }
 
