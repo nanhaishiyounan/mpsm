@@ -23,7 +23,10 @@ component({
   behaviors: [],
 
   properties: {
-
+    sort: {
+      type: null,
+      value: 0
+    }
   },
 
   data: {},

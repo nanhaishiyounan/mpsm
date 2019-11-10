@@ -151,9 +151,11 @@ function beforeFunction(context, result) {
   }
   context.setData = function () {
     if (!isObject(arguments[0])) {
-      return
+      result.data = context.data
+    } else {
+      result.data = {...result.data, ...arguments[0]}
     }
-    result.data = {...result.data, ...arguments[0]}
+
     if (isFunction(arguments[1])) {
       result.callbacks.push(arguments[1])
     }

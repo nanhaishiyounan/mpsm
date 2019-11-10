@@ -13,12 +13,14 @@
   <view class="tips">
     <text class="status">组件A2：{{nameA2}}</text>
   </view>
+  <button bindtap="sortPlus">sortPlus{{sort}}</button>
   <button bindtap="changeA1Name">强制更新A1</button>
   <button bindtap="changePageData">更新页面数据</button>
   <view class="title">组件A1</view>
   <a group-name="index-a-1"
      group-data="{{ {index, sort: 1} }}"
      group-keys="{{({name: 'nameA1'})}}"
+     sort="{{sort}}"
   ></a>
   <view class="title">组件A2</view>
   <a group-name="index-a-2"

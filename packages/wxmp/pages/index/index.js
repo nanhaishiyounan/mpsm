@@ -1,7 +1,6 @@
 import {dispatch, page} from '../../mpsm/index'
-import diff from '../../mpsm/diff'
 import {jumpTo} from '../../utils/util'
-const obj = {}
+
 page({
   watch: {
     isLogin(newState, oldState) {
@@ -23,7 +22,7 @@ page({
     a: {
       a: [{a:1}]
     },
-    b: obj
+    sort: 0
   },
   onLoad() {
     const {a} = this.data
@@ -32,6 +31,10 @@ page({
   },
   onShow() {
     console.log('上一页路由', this.data.prev)
+  },
+  sortPlus() {
+    this.data.sort += 1
+    this.setData()
   },
   login() {
     dispatch({
