@@ -139,5 +139,8 @@ export function clone(obj) {
   }
   return cloneObj
 }
-
+export function canWriteSetData(context) {
+  const descriptor = Object.getOwnPropertyDescriptor
+  return descriptor(context, 'setData') && descriptor.writable
+}
 export const prefix = '_mpsm_'

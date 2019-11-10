@@ -24,7 +24,7 @@
 		"bundle": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.9.2",
+	"libVersion": "2.0.4",
 	"appid": "wxc114fce9b7e107e4",
 	"projectname": "mpsm",
 	"debugOptions": {

@@ -1,4 +1,4 @@
-import {clone, mergeOps, isFunction, isObject, mergeData, isUndefined, isArray, prefix} from "./util"
+import {clone, mergeOps, isFunction, isObject, mergeData, isUndefined, isArray, prefix, canWriteSetData} from "./util"
 import {setModels, initModelsSubscriptions} from "./model"
 import {defaultOps, defaultComponentOps} from "./defaultOps"
 import diff from "./diff"
@@ -110,7 +110,8 @@ function wrapFunction(fn) {
 
 export function wrapSetData(context) {
   const originSetData = context.setData
-  context.setData = function (data) {
+  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
+  context[setDataKey] = function (data) {
     if (!isObject(arguments[0])) {
       data = this.data
     }
@@ -138,7 +139,7 @@ export function wrapSetData(context) {
   }
   context[prefix]._hasWrapSetData = true
   context[prefix]._originSetData = originSetData
-  context[prefix]._wrapSetData = context.setData
+  context[prefix]._wrapSetData = context[setDataKey]
 }
 
 function beforeFunction(context, result) {
@@ -149,18 +150,23 @@ function beforeFunction(context, result) {
     wrapSetData(context)
   }
 
-  context.setData = function () {
-    if (!isObject(arguments[0])) {
-      result.data = context.data
-    } else {
-      result.data = {...result.data, ...arguments[0]}
-    }
+  if (canWriteSetData(context)) {
+    const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
+    context[setDataKey] = function () {
+      if (!isObject(arguments[0])) {
+        result.data = context.data
+      } else {
+        result.data = {...result.data, ...arguments[0]}
+      }
 
-    if (isFunction(arguments[1])) {
-      result.callbacks.push(arguments[1])
+      if (isFunction(arguments[1])) {
+        result.callbacks.push(arguments[1])
+      }
     }
   }
+
 }
+
 function afterFunction(context, result) {
   if (!context || !context[prefix]) {
     return
@@ -176,9 +182,10 @@ function afterFunction(context, result) {
     }
 
   }
+  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
   result.data = {}
   result.callbacks = []
-  context.setData = context[prefix]._wrapSetData
+  context[setDataKey] = context[prefix]._wrapSetData
 }
 
 function getComputed(context, newData) {

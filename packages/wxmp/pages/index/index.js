@@ -22,7 +22,6 @@ page({
     a: {
       a: [{a:1}]
     },
-    sort: 0
   },
   onLoad() {
     const {a} = this.data
@@ -32,10 +31,7 @@ page({
   onShow() {
     console.log('上一页路由', this.data.prev)
   },
-  sortPlus() {
-    this.data.sort += 1
-    this.setData()
-  },
+
   login() {
     dispatch({
       type: 'userInfo/save',

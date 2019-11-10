@@ -1,4 +1,4 @@
-import {currPage, isFunction, isObject, clone, addPage, removePage, prefix, isArray} from "./util"
+import {currPage, isFunction, isObject, clone, addPage, removePage, prefix, isArray, canWriteSetData} from "./util"
 import {notifyHistoryListen} from "./history"
 import {performTransaction} from "./transaction"
 import {select, selectGroup} from "./model"
@@ -181,7 +181,8 @@ function initGroupToProps(context) {
 
 function initPropsToData(context) {
   const props = context[prefix]._propsValue
-  context.setData(props)
+  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
+  context[setDataKey](props)
 }
 function initCloneData(context) {
   context[prefix]._cloneData = clone(context.data)
@@ -201,10 +202,12 @@ function initDataToComputed(context) {
         }
         computedResult[key] = computed[key](clone(context.data || {}))
       })
-      context.setData(computedResult)
+      const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
+      context[setDataKey](computedResult)
     }
   }
 }
+
 function add$groupsToThis(context) {
   Object.defineProperty(context, "$groups", {
     get : function(){
@@ -252,13 +255,29 @@ function add$pageToThis(context) {
 }
 
 function add$setDataToThis(context) {
+
   Object.defineProperty(context, "$setData", {
     get : function(){
+      return this[prefix]._wrapSetData
+    },
+    set: function(v) {
       return this[prefix]._wrapSetData
     },
     enumerable : false,
     configurable : false
   })
+  if (canWriteSetData(context)) {
+    Object.defineProperty(context, "setData", {
+      get : function(){
+        return this[prefix]._wrapSetData
+      },
+      set: function(v) {
+        return this[prefix]._wrapSetData
+      },
+      enumerable : false,
+      configurable : false
+    })
+  }
 }
 function add$dataToThis(context) {
 	Object.defineProperty(context, "$data", {
