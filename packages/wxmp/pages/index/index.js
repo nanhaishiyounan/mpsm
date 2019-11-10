@@ -25,8 +25,11 @@ page({
   },
   onLoad() {
     const {a} = this.data
-    this.data.a.a[0].a = 2
-    this.setData()
+    this.state.a = {}
+    this.state.a.a = []
+    this.state.a.a[0] = {}
+    this.state.a.a[0].a = 2
+    this.update()
   },
   onShow() {
     console.log('上一页路由', this.data.prev)

@@ -1,4 +1,15 @@
-import {currPage, isFunction, isObject, clone, addPage, removePage, prefix, isArray, canWriteSetData} from "./util"
+import {
+  currPage,
+  isFunction,
+  isObject,
+  clone,
+  addPage,
+  removePage,
+  prefix,
+  isArray,
+  canWriteSetData,
+  isUndefined, isNumber
+} from "./util"
 import {notifyHistoryListen} from "./history"
 import {performTransaction} from "./transaction"
 import {select, selectGroup} from "./model"
@@ -19,14 +30,14 @@ export const defaultOps = {
     _lifetimes: {},
 		_cloneData: {},
   },
-
+  state: {},
   onLoad() {
     this.dispatch = dispatchGroup
+    this.update = update
     initCloneData(this)
     add$groupsToThis(this)
     addPage(this)
     add$setDataToThis(this)
-		add$dataToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -51,9 +62,10 @@ const defaultComponentLifetimes = {
       _components: [],
       _isComponent: true,
       _hasWrapSetData: false,
-      _cloneData: {},
     }
     this.dispatch = dispatchGroup
+    this.state = {}
+    this.update = update
   },
   attached() {
     this[prefix]._page = currPage()
@@ -64,7 +76,6 @@ const defaultComponentLifetimes = {
     add$groupToThis(this)
     add$pageToThis(this)
     add$setDataToThis(this)
-		add$dataToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -255,7 +266,6 @@ function add$pageToThis(context) {
 }
 
 function add$setDataToThis(context) {
-
   Object.defineProperty(context, "$setData", {
     get : function(){
       return this[prefix]._wrapSetData
@@ -266,27 +276,12 @@ function add$setDataToThis(context) {
     enumerable : false,
     configurable : false
   })
-  if (canWriteSetData(context)) {
-    Object.defineProperty(context, "setData", {
-      get : function(){
-        return this[prefix]._wrapSetData
-      },
-      set: function(v) {
-        return this[prefix]._wrapSetData
-      },
-      enumerable : false,
-      configurable : false
-    })
-  }
 }
-function add$dataToThis(context) {
-	Object.defineProperty(context, "$data", {
-		get : function(){
-			return this[prefix]._cloneData
-		},
-		enumerable : false,
-		configurable : false
-	})
+
+function update() {
+  this[prefix]._wrapSetData.call(this, this.state, arguments[0])
+  this.state = {}
 }
+
 
 

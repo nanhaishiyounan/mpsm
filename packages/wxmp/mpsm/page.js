@@ -150,18 +150,16 @@ function beforeFunction(context, result) {
     wrapSetData(context)
   }
 
-  if (canWriteSetData(context)) {
-    const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-    context[setDataKey] = function () {
-      if (!isObject(arguments[0])) {
-        result.data = context.data
-      } else {
-        result.data = {...result.data, ...arguments[0]}
-      }
+  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
+  context[setDataKey] = function () {
+    if (!isObject(arguments[0])) {
+      result.data = context.data
+    } else {
+      result.data = {...result.data, ...arguments[0]}
+    }
 
-      if (isFunction(arguments[1])) {
-        result.callbacks.push(arguments[1])
-      }
+    if (isFunction(arguments[1])) {
+      result.callbacks.push(arguments[1])
     }
   }
 
