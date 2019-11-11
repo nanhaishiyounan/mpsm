@@ -7,7 +7,7 @@ import {
   removePage,
   prefix,
   isArray,
-  canWriteSetData,
+  $setDataKey,
   isUndefined, isNumber, mergeData
 } from "./util"
 import {notifyHistoryListen} from "./history"
@@ -31,7 +31,6 @@ export const defaultOps = {
     _lifetimes: {},
 		_cloneData: {},
   },
-  state: {},
   onLoad() {
     this.dispatch = dispatchGroup
     this.update = update
@@ -67,7 +66,6 @@ const defaultComponentLifetimes = {
       _cloneData: {}
     }
     this.dispatch = dispatchGroup
-    this.state = {}
     this.update = update
   },
   attached() {
@@ -307,7 +305,7 @@ function updateComputed(context) {
       if (!isFunction(computed[key])) {
         return
       }
-      computedResult[key] = computed[key](context.data || {})
+      computedResult[key] = computed[key](context.data)
       updateCloneData(context, key, computedResult[key])
     })
     const {result} = diff(computedResult, context.data)

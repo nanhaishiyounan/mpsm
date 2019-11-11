@@ -123,7 +123,7 @@ export function wrapSetData(context) {
     let cloneThisData = this[prefix]._cloneData
     const computed = this[prefix]._computed
     if (isObject(computed) && Object.keys(computed).length > 0) {
-      const newData = mergeData(data, clone(cloneThisData))
+      const newData = mergeData(data, cloneThisData)
       computedResult = getComputed(this, newData)
     }
 
@@ -138,7 +138,7 @@ export function wrapSetData(context) {
   }
   context[prefix]._hasWrapSetData = true
   context[prefix]._originSetData = originSetData
-  context[prefix]._wrapSetData = context[setDataKey]
+  context[prefix]._wrapSetData = context[$setDataKey]
 }
 
 function beforeFunction(context, result) {

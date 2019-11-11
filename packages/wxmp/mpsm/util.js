@@ -131,7 +131,7 @@ export function clone(obj) {
   if (!isObject(obj) && !isArray(obj)) {
     return obj
   }
-  const cloneObj ={}
+  const cloneObj = isObject(obj) ? {} : []
   for(let key in obj) {
     if(obj.hasOwnProperty(key)) {
       cloneObj[key] = (isObject(obj[key]) || isArray(obj[key])) ? clone(obj[key]) : obj[key]
