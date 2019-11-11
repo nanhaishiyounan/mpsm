@@ -1,4 +1,4 @@
-import {clone, isArray, isFunction, isObject, prefix, canWriteSetData} from "./util"
+import {clone, isArray, isFunction, isObject, prefix, $setDataKey} from "./util"
 import {select, selectGroup} from "./model"
 import diff from "./diff"
 
@@ -7,6 +7,7 @@ export function transaction(context, isGroup) {
   if (!isFunction(mapToData)) {
     return
   }
+  console.log('isGroup', isGroup)
   const state = isGroup ? selectGroup(context) : select()
   const newProps = mapToData.call(context, state) || {}
   updatePropsAndData(context, newProps)
@@ -43,13 +44,12 @@ export function updatePropsAndData(context, newProps) {
   }
   const oldProps = context[prefix]._propsValue || {}
   const {result} = diff(newProps, oldProps)
-  if (Object.keys(result) === 0) {
+  if (Object.keys(result).length === 0) {
     return
   }
   context[prefix]._propsValue = {...context[prefix]._propsValue, ...newProps}
-
-  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-  const rootKeys = context[setDataKey](result)
+  console.log(result)
+  const rootKeys = context[prefix]._wrapSetData.call(context, result)
 
   if (!isObject(rootKeys)) {
     return

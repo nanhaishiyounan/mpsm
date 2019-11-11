@@ -30,6 +30,8 @@ export const defaultOps = {
     _firstOnShow: true,
     _lifetimes: {},
 		_cloneData: {},
+    _batch: 0,
+    _batchData: {data: {}, callbacks: []},
   },
   onLoad() {
     this.dispatch = dispatchGroup
@@ -63,7 +65,9 @@ const defaultComponentLifetimes = {
       _components: [],
       _isComponent: true,
       _hasWrapSetData: false,
-      _cloneData: {}
+      _cloneData: {},
+      _batch: 0,
+      _batchData: {data: {}, callbacks: []},
     }
     this.dispatch = dispatchGroup
     this.update = update
@@ -194,7 +198,7 @@ function initGroupToProps(context) {
 
 function initPropsToData(context) {
   const props = context[prefix]._propsValue
-  context[$setDataKey](props)
+  context[prefix]._wrapSetData.call(context, props)
 }
 function initCloneData(context) {
   context[prefix]._cloneData = clone(context.data)
@@ -265,6 +269,8 @@ function add$setDataSyncToThis(context) {
     configurable : false
   })
 }
+
+
 
 function update() {
   this[prefix]._wrapSetData.call(this, null, arguments[0])

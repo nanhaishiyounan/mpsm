@@ -111,7 +111,7 @@ function wrapFunction(fn) {
 
 export function wrapSetData(context) {
   const originSetData = context.setData
-  context[$setDataKey] = function (data) {
+  context[prefix]._wrapSetData = function (data) {
     if (!isObject(arguments[0])) {
       data = this.data
     }
@@ -123,7 +123,7 @@ export function wrapSetData(context) {
     let cloneThisData = this[prefix]._cloneData
     const computed = this[prefix]._computed
     if (isObject(computed) && Object.keys(computed).length > 0) {
-      const newData = mergeData(data, cloneThisData)
+      const newData = mergeData(data, clone(cloneThisData))
       computedResult = getComputed(this, newData)
     }
 
@@ -138,49 +138,63 @@ export function wrapSetData(context) {
   }
   context[prefix]._hasWrapSetData = true
   context[prefix]._originSetData = originSetData
-  context[prefix]._wrapSetData = context[$setDataKey]
 }
 
-function beforeFunction(context, result) {
+function beforeFunction(context) {
   if (!context || !context[prefix]) {
     return
   }
   if (!context[prefix]._hasWrapSetData) {
     wrapSetData(context)
   }
-
+  context[prefix]._batch += 1
   context[$setDataKey] = function () {
-    if (!isObject(arguments[0])) {
-      result.data = context.data
-    } else {
-      result.data = {...result.data, ...arguments[0]}
-    }
-
-    if (isFunction(arguments[1])) {
-      result.callbacks.push(arguments[1])
-    }
+    addBatchData(context, arguments)
   }
 
 }
-
-function afterFunction(context, result) {
-  if (!context || !context[prefix]) {
-    return
+function addBatchData(context, args) {
+  const batchData = context[prefix]._batchData
+  if (!isObject(args[0])) {
+    batchData.data = context.data
+  } else {
+    batchData.data = {...batchData.data, ...args[0]}
   }
-  if (Object.keys(result.data).length) {
-    if (result.callbacks.length) {
+
+  if (isFunction(args[1])) {
+    batchData.callbacks.push(args[1])
+  }
+}
+function updateBatchData(context) {
+  const batchData = context[prefix]._batchData
+  const wrapSetData = context[prefix]._wrapSetData
+  if (Object.keys(batchData.data).length) {
+    if (batchData.callbacks.length) {
       const callback = function () {
-        result.callbacks.forEach(cb => cb.apply(this, arguments))
+        batchData.callbacks.forEach(cb => cb.apply(this, arguments))
       }
-      context[prefix]._wrapSetData.call(context, result.data, callback)
+      wrapSetData.call(context, batchData.data, callback)
     } else {
-      context[prefix]._wrapSetData.call(context, result.data)
+      wrapSetData.call(context, batchData.data)
     }
 
   }
-  result.data = {}
-  result.callbacks = []
-  context[$setDataKey] = context[prefix]._wrapSetData
+  batchData.data = {}
+  batchData.callbacks = []
+  context[$setDataKey] = wrapSetData
+  context[prefix]._batch = 0
+}
+
+function afterFunction(context) {
+  if (!context || !context[prefix]) {
+    return
+  }
+  const batch = context[prefix]._batch
+  if (batch <= 1) {
+    updateBatchData(context)
+  } else {
+    context[prefix]._batch -= 1
+  }
 }
 
 function getComputed(context, newData) {
