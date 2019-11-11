@@ -57,7 +57,7 @@ export function dispatchGroup({type, payload}) {
     return
   }
   if (updateType === 'data') {
-    this[$setDataKey](payload)
+    this[prefix]._wrapSetData.call(this, payload)
   }
 
   if (updateType === 'data' || updateType === 'group') {

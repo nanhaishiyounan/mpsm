@@ -126,7 +126,8 @@ export function wrapSetData(context) {
       computedResult = getComputed(this, newData)
     }
 
-    const {result, rootKeys} = diff({...data, ...computedResult}, cloneThisData)
+    const changedData = {...data, ...computedResult}
+    const {result, rootKeys} = diff(changedData, cloneThisData)
 
     if (Object.keys(result).length === 0) {
       return rootKeys
