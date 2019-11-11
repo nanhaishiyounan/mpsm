@@ -40,11 +40,12 @@ export const defaultOps = {
     add$groupsToThis(this)
     addPage(this)
     add$setDataSyncToThis(this)
+    notifyHistoryListen()
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
     initDataToComputed(this)
-    notifyHistoryListen()
+
   },
   onUnload() {
     removePage(this)

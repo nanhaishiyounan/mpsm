@@ -7,7 +7,6 @@ export function transaction(context, isGroup) {
   if (!isFunction(mapToData)) {
     return
   }
-  console.log('isGroup', isGroup)
   const state = isGroup ? selectGroup(context) : select()
   const newProps = mapToData.call(context, state) || {}
   updatePropsAndData(context, newProps)
@@ -48,8 +47,7 @@ export function updatePropsAndData(context, newProps) {
     return
   }
   context[prefix]._propsValue = {...context[prefix]._propsValue, ...newProps}
-  console.log(result)
-  const rootKeys = context[prefix]._wrapSetData.call(context, result)
+  const rootKeys = context[$setDataKey].call(context, result)
 
   if (!isObject(rootKeys)) {
     return

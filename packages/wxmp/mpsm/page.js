@@ -100,11 +100,10 @@ function mapFuctionToWrap(obj, level = mapWrapFunctionLevel) {
 }
 
 function wrapFunction(fn) {
-  const result = {data: {}, callbacks: []}
   return function() {
-    beforeFunction(this, result)
+    beforeFunction(this)
     const returnValue = fn.apply(this, arguments)
-    afterFunction(this, result)
+    afterFunction(this)
     return returnValue
   }
 }
