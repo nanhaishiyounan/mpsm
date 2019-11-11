@@ -132,7 +132,7 @@ export function wrapSetData(context) {
       return rootKeys
     }
     originSetData.call(this, result, arguments[1])
-    mergeData(result, cloneThisData)
+    mergeData(clone(result), cloneThisData)
     return rootKeys
   }
   context[prefix]._hasWrapSetData = true

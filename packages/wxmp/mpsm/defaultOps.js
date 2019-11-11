@@ -274,6 +274,7 @@ function add$setDataSyncToThis(context) {
 
 
 function update() {
+  console.log('update')
   this[prefix]._wrapSetData.call(this, null, arguments[0])
 }
 
