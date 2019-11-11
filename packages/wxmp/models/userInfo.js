@@ -15,7 +15,8 @@ export default {
           payload: {
             prev,
             current
-          }
+          },
+          batch: false
         })
       }
       history.listen(callback)

@@ -2,19 +2,19 @@ import {clone, isArray, isFunction, isObject, prefix, $setDataKey} from "./util"
 import {select, selectGroup} from "./model"
 import diff from "./diff"
 
-export function transaction(context, isGroup) {
+export function transaction(context, isGroup, batch) {
   const mapToData = isGroup ? context[prefix]._mapGroupToData : context[prefix]._mapPropsToData
   if (!isFunction(mapToData)) {
     return
   }
   const state = isGroup ? selectGroup(context) : select()
   const newProps = mapToData.call(context, state) || {}
-  updatePropsAndData(context, newProps)
+  updatePropsAndData(context, newProps, batch)
 }
 
-export function performTransaction(pageIns, groupNamesNeedUpdate) {
+export function performTransaction(pageIns, groupNamesNeedUpdate, batch) {
   const isGroup = groupNamesNeedUpdate && groupNamesNeedUpdate.length
-  transaction(pageIns, isGroup)
+  transaction(pageIns, isGroup, batch)
   if (isGroup) {
     pageIns[prefix]._groupNamesNeedUpdate = []
   } else {
@@ -32,12 +32,12 @@ export function performTransaction(pageIns, groupNamesNeedUpdate) {
       return
     }
     setTimeout(() => {
-      transaction(component, isGroup)
+      transaction(component, isGroup, batch)
     }, 0)
   })
 }
 
-export function updatePropsAndData(context, newProps) {
+export function updatePropsAndData(context, newProps, batch) {
   if (!isObject(newProps)) {
     throw new Error(`mapGroupToData or mapPropsToData function must return a Object type!`)
   }
@@ -47,7 +47,8 @@ export function updatePropsAndData(context, newProps) {
     return
   }
   context[prefix]._propsValue = {...context[prefix]._propsValue, ...newProps}
-  const rootKeys = context[$setDataKey].call(context, result)
+  const setData = batch ? context[$setDataKey] : context[prefix]._wrapSetData
+  const rootKeys = setData.call(context, result)
 
   if (!isObject(rootKeys)) {
     return

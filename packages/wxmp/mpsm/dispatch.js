@@ -3,7 +3,7 @@ import {select, updateState, updateStateGroup} from "./model"
 import notify, {notifyGroup} from "./notify"
 
 
-export function dispatch({type, payload, lazy = true}) {
+export function dispatch({type, payload, lazy = true, batch = true}) {
   const [namespace, reducer] = type.split('/')
   const model = select(namespace)
   const oldState = model.state
@@ -22,7 +22,7 @@ export function dispatch({type, payload, lazy = true}) {
   if (model.reducers && model.reducers[reducer]) {
     const state = model.reducers[reducer](oldState, {type, payload})
     updateState(model, state)
-    notify(lazy)
+    notify(lazy, batch)
   }
 }
 
@@ -30,11 +30,11 @@ export function dispatch({type, payload, lazy = true}) {
 
 export function put(namespace, putAction) {
   const type = `${namespace}/${putAction.type}`
-  const payload = putAction.payload
-  return dispatch({type, payload})
+  const {payload, batch} = putAction
+  return dispatch({type, payload, batch})
 }
 
-export function dispatchGroup({type, payload}) {
+export function dispatchGroup({type, payload, batch = true}) {
   if (!isObject(this[prefix])) {
     return
   }
@@ -89,7 +89,7 @@ export function dispatchGroup({type, payload}) {
     const prevState = groups[groupName] || {}
     const state = {...prevState, ...newPayload}
     updateStateGroup(groups, groupName, state)
-    notifyGroup(pageIns, groupName)
+    notifyGroup(pageIns, groupName, batch)
   }
 }
 

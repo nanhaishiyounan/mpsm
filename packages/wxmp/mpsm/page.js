@@ -118,22 +118,25 @@ export function wrapSetData(context) {
       return
     }
 
-    let computedResult = {}
     let cloneThisData = this[prefix]._cloneData
-    const computed = this[prefix]._computed
-    if (isObject(computed) && Object.keys(computed).length > 0) {
-      const newData = mergeData(data, clone(cloneThisData))
-      computedResult = getComputed(this, newData)
-    }
 
-    const changedData = {...data, ...computedResult}
-    const {result, rootKeys} = diff(changedData, cloneThisData)
+    const {result, rootKeys} = diff(data, cloneThisData)
 
     if (Object.keys(result).length === 0) {
       return rootKeys
     }
     originSetData.call(this, result, arguments[1])
-    mergeData(clone(result), cloneThisData)
+
+    const computed = this[prefix]._computed
+    let computedResult = {}
+    if (isObject(computed) && Object.keys(computed).length > 0) {
+      const {result} = diff(getComputed(this, this.data), this.data)
+      computedResult = result
+      if (Object.keys(computedResult).length > 0) {
+        originSetData.call(this, computedResult)
+      }
+    }
+    mergeData(clone({...result, ...computedResult}), cloneThisData)
     return rootKeys
   }
   context[prefix]._hasWrapSetData = true

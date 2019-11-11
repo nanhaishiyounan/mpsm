@@ -28,12 +28,7 @@ page({
     }
   },
   onLoad() {
-    const {a} = this.data
-    this.state.a = {}
-    this.state.a.a = []
-    this.state.a.a[0] = {}
-    this.state.a.a[0].a = 2
-    this.update()
+
   },
   sortCount() {
     this.data.gd.sort += 1
