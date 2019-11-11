@@ -144,3 +144,4 @@ export function canWriteSetData(context) {
   return descriptor && descriptor.writable
 }
 export const prefix = '_mpsm_'
+export const $setDataKey = '$setData'

@@ -38,7 +38,7 @@ export const defaultOps = {
     initCloneData(this)
     add$groupsToThis(this)
     addPage(this)
-    add$setDataToThis(this)
+    add$setDataSyncToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -78,7 +78,7 @@ const defaultComponentLifetimes = {
     add$groupsToThis(this)
     add$groupToThis(this)
     add$pageToThis(this)
-    add$setDataToThis(this)
+    add$setDataSyncToThis(this)
     initModelToProps(this)
     initGroupToProps(this)
     initPropsToData(this)
@@ -196,8 +196,7 @@ function initGroupToProps(context) {
 
 function initPropsToData(context) {
   const props = context[prefix]._propsValue
-  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-  context[setDataKey](props)
+  context[$setDataKey](props)
 }
 function initCloneData(context) {
   context[prefix]._cloneData = clone(context.data)
@@ -256,8 +255,8 @@ function add$pageToThis(context) {
   })
 }
 
-function add$setDataToThis(context) {
-  Object.defineProperty(context, "$setData", {
+function add$setDataSyncToThis(context) {
+  Object.defineProperty(context, "$setDataSync", {
     get : function(){
       return this[prefix]._wrapSetData
     },

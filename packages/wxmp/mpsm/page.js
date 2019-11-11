@@ -1,4 +1,4 @@
-import {clone, mergeOps, isFunction, isObject, mergeData, isUndefined, isArray, prefix, canWriteSetData} from "./util"
+import {clone, mergeOps, isFunction, isObject, mergeData, isUndefined, isArray, prefix, $setDataKey} from "./util"
 import {setModels, initModelsSubscriptions} from "./model"
 import {defaultOps, defaultComponentOps} from "./defaultOps"
 import diff from "./diff"
@@ -111,8 +111,7 @@ function wrapFunction(fn) {
 
 export function wrapSetData(context) {
   const originSetData = context.setData
-  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-  context[setDataKey] = function (data) {
+  context[$setDataKey] = function (data) {
     if (!isObject(arguments[0])) {
       data = this.data
     }
@@ -150,8 +149,7 @@ function beforeFunction(context, result) {
     wrapSetData(context)
   }
 
-  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
-  context[setDataKey] = function () {
+  context[$setDataKey] = function () {
     if (!isObject(arguments[0])) {
       result.data = context.data
     } else {
@@ -180,10 +178,9 @@ function afterFunction(context, result) {
     }
 
   }
-  const setDataKey = canWriteSetData(context) ? 'setData' : '$setData'
   result.data = {}
   result.callbacks = []
-  context[setDataKey] = context[prefix]._wrapSetData
+  context[$setDataKey] = context[prefix]._wrapSetData
 }
 
 function getComputed(context, newData) {
