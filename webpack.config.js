@@ -12,11 +12,10 @@ module.exports = {
 
     filename: 'mpsm.js',
 
-    library: 'mpsm',
+    library: '',
 
     libraryExport: "default",
 
-    globalObject: 'this',
 
     libraryTarget: 'umd'
 

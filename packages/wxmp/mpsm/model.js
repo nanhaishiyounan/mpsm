@@ -13,7 +13,7 @@ export function select(target) {
       }
     }
   }
-  return isFunction(target) ? target(modelsState) : modelsState
+  return isFunction(target) ? target(clone(modelsState)) : clone(modelsState)
 }
 
 export const unsubscriptionFuns = {}

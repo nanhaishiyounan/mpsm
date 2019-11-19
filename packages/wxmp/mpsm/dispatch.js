@@ -1,4 +1,4 @@
-import {isObject, isString, isUndefined, prefix, $setDataKey} from "./util"
+import {isObject, isString, isUndefined, prefix, $setDataKey, clone} from "./util"
 import {select, updateState, updateStateGroup} from "./model"
 import notify, {notifyGroup} from "./notify"
 
@@ -20,7 +20,7 @@ export function dispatch({type, payload, lazy = true, batch = true}) {
     })
   }
   if (model.reducers && model.reducers[reducer]) {
-    const state = model.reducers[reducer](oldState, {type, payload})
+    const state = model.reducers[reducer](clone(oldState), {type, payload})
     updateState(model, state)
     notify(lazy, batch)
   }
