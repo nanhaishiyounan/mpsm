@@ -29,7 +29,12 @@ export function dispatch({type, payload, lazy = true, batch = true}) {
 
 
 export function put(namespace, putAction) {
-  const type = `${namespace}/${putAction.type}`
+  let type = ''
+  if (putAction.type.split('/').length === 2) {
+    type = putAction.type
+  } else {
+    type = `${namespace}/${putAction.type}`
+  }
   const {payload, batch} = putAction
   return dispatch({type, payload, batch})
 }
