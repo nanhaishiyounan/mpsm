@@ -1,6 +1,7 @@
-import {isObject, isString, isUndefined, prefix, $setDataKey, clone} from "./util"
+import {isObject, isString, isUndefined, prefix, $setDataKey} from "./util"
 import {select, updateState, updateStateGroup} from "./model"
 import notify, {notifyGroup} from "./notify"
+import {clone} from "../utils/util";
 
 
 export function dispatch({type, payload, lazy = true, batch = true}) {
@@ -29,14 +30,10 @@ export function dispatch({type, payload, lazy = true, batch = true}) {
 
 
 export function put(namespace, putAction) {
-  let type = ''
-  if (putAction.type.split('/').length === 2) {
-    type = putAction.type
-  } else {
-    type = `${namespace}/${putAction.type}`
+  if (putAction.type.split('/').length === 1) {
+    putAction.type = `${namespace}/${putAction.type}`
   }
-  const {payload, batch} = putAction
-  return dispatch({type, payload, batch})
+  return dispatch(putAction)
 }
 
 export function dispatchGroup({type, payload, batch = true}) {
