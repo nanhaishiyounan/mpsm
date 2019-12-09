@@ -102,7 +102,12 @@ function mapFuctionToWrap(obj, level = mapWrapFunctionLevel) {
 function wrapFunction(fn) {
   return function() {
     beforeFunction(this)
-    const returnValue = fn.apply(this, arguments)
+    let returnValue = undefined
+    try {
+      returnValue = fn.apply(this, arguments)
+    } catch (err) {
+      console.log(err)
+    }
     afterFunction(this)
     return returnValue
   }
