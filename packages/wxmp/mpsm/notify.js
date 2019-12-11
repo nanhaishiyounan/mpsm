@@ -2,14 +2,14 @@ import {currPage, getPages, prefix} from "./util"
 import {performTransaction} from "./transaction"
 
 
-export default function notify(lazy, batch) {
+export default function notify(namespace, lazy, batch) {
   const pages = getPages()
   const currPageIns = currPage()
 
   pages.forEach(pageIns => {
     pageIns[prefix]._hasTransaction = true
     if (currPageIns === pageIns || !lazy) {
-      performTransaction(pageIns, null, batch)
+      performTransaction(namespace, pageIns, null, batch)
     }
   })
 }
@@ -19,5 +19,5 @@ export function notifyGroup(pageIns, groupName, batch) {
   if (pageIns !== currPage()) {
     return
   }
-  performTransaction(pageIns, pageIns[prefix]._groupNamesNeedUpdate, batch)
+  performTransaction('', pageIns, pageIns[prefix]._groupNamesNeedUpdate, batch)
 }

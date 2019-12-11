@@ -5,6 +5,22 @@ import {history} from "./history"
 let models = []
 let modelsState = {}
 
+export function addSubscriber(namespace, instance) {
+
+  let subscribers = {}
+  if (instance[prefix]._isComponent) {
+    subscribers = instance[prefix]._page[prefix]._subscribers
+  } else {
+    subscribers = instance[prefix]._subscribers
+  }
+  if (!subscribers[namespace]) {
+    subscribers[namespace] = []
+  }
+  if (subscribers[namespace].indexOf(instance) === -1) {
+    subscribers[namespace].push(instance)
+  }
+
+}
 export function select(target) {
   if (isString(target)) {
     for (let i = 0;i < models.length; i++) {
@@ -75,12 +91,17 @@ export function updateStateGroup(groups, groupName, state) {
   groups[groupName] = state
 }
 
-export function selectGroup(target) {
-  if (!target[prefix]._isComponent) {
-    return clone(target[prefix]._groups || {})
+export function selectGroup(context) {
+  if (!context[prefix]._isComponent) {
+    return clone(context[prefix]._groups || {})
   }
-  const groupName = target.data.groupName
-  return clone(target[prefix]._page[prefix]._groups[groupName] || {})
+  const groupName = context.data.groupName
+  const groupKeys = isObject(context.data.groupKeys) ? Object.keys(context.data.groupKeys) : []
+  const group = context[prefix]._page[prefix]._groups[groupName]
+  groupKeys.forEach((key, value) => {
+    group[value] = group[key]
+  })
+  return clone(group || {})
 }
 
 export function setModels(m) {

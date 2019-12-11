@@ -23,7 +23,7 @@ export function dispatch({type, payload, lazy = true, batch = true}) {
   if (model.reducers && model.reducers[reducer]) {
     const state = model.reducers[reducer](clone(oldState), {type, payload})
     updateState(model, state)
-    notify(lazy, batch)
+    notify(namespace, lazy, batch)
   }
 }
 

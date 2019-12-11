@@ -12,29 +12,44 @@ export function transaction(context, isGroup, batch) {
   updatePropsAndData(context, newProps, batch)
 }
 
-export function performTransaction(pageIns, groupNamesNeedUpdate, batch) {
+export function performTransaction(namespace, pageIns, groupNamesNeedUpdate, batch) {
   const isGroup = groupNamesNeedUpdate && groupNamesNeedUpdate.length
-  transaction(pageIns, isGroup, batch)
+  // transaction(pageIns, isGroup, batch)
   if (isGroup) {
     pageIns[prefix]._groupNamesNeedUpdate = []
   } else {
     pageIns[prefix]._hasTransaction = false
   }
 
-  if (pageIns[prefix]._components.length === 0) {
-    return
-  }
 
-  pageIns[prefix]._components.forEach(component => {
-    if (component === null ||
-      isGroup && groupNamesNeedUpdate.indexOf(component.data.groupName) === -1
-    ) {
+
+  if (namespace) {
+    const instances = pageIns[prefix]._subscribers[namespace]
+    if (!instances || instances.length === 0) {
       return
     }
-    setTimeout(() => {
+    instances.forEach(component => {
+      if (component[prefix]._hasDetached) {
+        return
+      }
       transaction(component, isGroup, batch)
-    }, 0)
-  })
+    })
+  } else {
+    transaction(pageIns, isGroup, batch)
+    if (pageIns[prefix]._components.length === 0) {
+      return
+    }
+
+    pageIns[prefix]._components.forEach(component => {
+      if (component === null ||
+        isGroup && groupNamesNeedUpdate.indexOf(component.data.groupName) === -1
+      ) {
+        return
+      }
+      transaction(component, isGroup, batch)
+    })
+  }
+
 }
 
 export function updatePropsAndData(context, newProps, batch) {

@@ -12,7 +12,7 @@ import {
 } from "./util"
 import {notifyHistoryListen} from "./history"
 import {performTransaction} from "./transaction"
-import {select, selectGroup} from "./model"
+import {select, selectGroup, addSubscriber} from "./model"
 import {dispatchGroup} from "./dispatch"
 import diff from "./diff";
 
@@ -32,6 +32,7 @@ export const defaultOps = {
 		_cloneData: {},
     _batch: 0,
     _batchData: {data: {}, callbacks: []},
+    _subscribers: {},
   },
   onLoad() {
     this.dispatch = dispatchGroup
@@ -69,13 +70,16 @@ const defaultComponentLifetimes = {
       _cloneData: {},
       _batch: 0,
       _batchData: {data: {}, callbacks: []},
+      _hasDetached: false
     }
     this.dispatch = dispatchGroup
     this.update = update
   },
   attached() {
     this[prefix]._page = currPage()
-    this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
+    if (this.data.groupName) {
+      this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
+    }
     subscribePageLifetimes(this[prefix]._page, this)
     initCloneData(this)
     add$groupsToThis(this)
@@ -89,7 +93,7 @@ const defaultComponentLifetimes = {
     proxyProperties(this)
   },
   detached() {
-    this[prefix]._page[prefix]._components[this[prefix]._indexOfComponents] = null
+    this[prefix]._hasDetached = true
   },
 }
 
@@ -170,9 +174,27 @@ function mapComponentsOnPageLifetimes(components, lifetimeName, arg) {
   })
 }
 
+function collectSubscribers(context, obj) {
+  const modelNamespaces = Object.keys(obj)
+  const descripors = {}
+
+  for (let i = 0; i < modelNamespaces.length; i++) {
+    const value = obj[modelNamespaces[i]]
+    descripors[modelNamespaces[i]] = {
+      get() {
+        addSubscriber(modelNamespaces[i], context)
+        return value
+      }
+    }
+  }
+  Object.defineProperties(obj, descripors)
+}
+
 function initModelToProps(context) {
   if (isFunction(context[prefix]._mapPropsToData)) {
-    const newProps = context[prefix]._mapPropsToData.call(context, select())
+    const state = select()
+    collectSubscribers(context, state)
+    const newProps = context[prefix]._mapPropsToData.call(context, state)
     if (!isObject(newProps)) {
       throw new Error(`${String(this[prefix]._mapPropsToData)} must return a Object type!`)
     }
