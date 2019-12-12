@@ -96,11 +96,11 @@ export function selectGroup(context) {
     return clone(context[prefix]._groups || {})
   }
   const groupName = context.data.groupName
-  const groupKeys = isObject(context.data.groupKeys) ? Object.keys(context.data.groupKeys) : []
+  const groupKeys = context.data.groupKeys
   const group = context[prefix]._page[prefix]._groups[groupName]
-  groupKeys.forEach((key, value) => {
-    group[value] = group[key]
-  })
+  for (let key in groupKeys) {
+    group[key] = group[groupKeys[key]]
+  }
   return clone(group || {})
 }
 
