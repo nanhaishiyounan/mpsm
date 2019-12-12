@@ -7,9 +7,9 @@ export default function notify(namespace, lazy, batch) {
   const currPageIns = currPage()
 
   pages.forEach(pageIns => {
-    pageIns[prefix]._hasTransaction = true
+    pageIns[prefix]._hasTransaction.push(namespace)
     if (currPageIns === pageIns || !lazy) {
-      performTransaction(namespace, pageIns, null, batch)
+      performTransaction(pageIns[prefix]._hasTransaction, pageIns, null, batch)
     }
   })
 }

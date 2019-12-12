@@ -21,7 +21,7 @@ const lifetimesName = ['onShow', 'onHide', 'onResize', 'onPageScroll', 'onTabIte
 export const defaultOps = {
   [prefix]: {
     _propsValue: {},
-    _hasTransaction: false,
+    _hasTransaction: [],
     _hasWrapSetData: false,
     _isPage: true,
     _groups: {},
@@ -124,11 +124,11 @@ function genPageLifetimes() {
           notifyHistoryListen()
         }
         this[prefix]._firstOnShow = false
-        if (this[prefix]._hasTransaction) {
-          performTransaction(this)
+        if (this[prefix]._hasTransaction.length) {
+          performTransaction(this[prefix]._hasTransaction, this)
         }
         if (this[prefix]._groupNamesNeedUpdate.length) {
-          performTransaction(this, this[prefix]._groupNamesNeedUpdate)
+          performTransaction('', this, this[prefix]._groupNamesNeedUpdate)
         }
         const components = this[prefix]._lifetimes[name]
         if (!components) {

@@ -18,13 +18,28 @@ export function performTransaction(namespace, pageIns, groupNamesNeedUpdate, bat
   if (isGroup) {
     pageIns[prefix]._groupNamesNeedUpdate = []
   } else {
-    pageIns[prefix]._hasTransaction = false
+    pageIns[prefix]._hasTransaction = []
   }
 
 
 
   if (namespace) {
-    const instances = pageIns[prefix]._subscribers[namespace]
+    let instances = []
+    if (isArray(namespace)) {
+      namespace.forEach(name => {
+        if (!pageIns[prefix]._subscribers[name]) {
+          return
+        }
+        pageIns[prefix]._subscribers[name].forEach(ins => {
+          if (instances.indexOf(ins) === -1) {
+            instances.push(ins)
+          }
+        })
+      })
+    } else {
+      instances = pageIns[prefix]._subscribers[namespace]
+    }
+
     if (!instances || instances.length === 0) {
       return
     }
