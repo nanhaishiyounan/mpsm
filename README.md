@@ -45,6 +45,24 @@ page({ //component
 })()
 
 ```
+
+```javascript
+// 数据更新有两种方式
+// 第一种，直接修改this.data, 需要更新时调用this.update()
+this.data.a = 1
+this.update()
+
+// 第二种 this.$setData
+this. $setData({
+  list: list
+})
+
+//第一种更新方式，根据需要自己确定数据更新的时机，调用this.update()
+//第二种更新方式，会进行批处理，待函数执行结束后统一批量更新，异步操作立即更新，类似react中的setState
+
+
+```
+
 ### 方法
 
 | 方法        | 说明   |  备注  |
@@ -73,11 +91,11 @@ unsubscribe('userInfo/setup');
 import {dispatch, page, component} from '../../mpsm/index'
 
 page({ // 或者 component
-  watch: {
+  watch: { // 属性监听
     isLogin(newState, oldState) {
     }
   },
-  computed: {
+  computed: { // 计算属性
     countComputed(data) {
       return data.count * 2
     }
@@ -139,6 +157,8 @@ component({
 
 
 ### models 全局状态
+
+参考 [dvajs](https://dvajs.com/ "dva")
 ```javascript
 export default {
   namespace: '',
@@ -159,16 +179,7 @@ export default {
 
 ```
 
-### model 属性
-详情参阅 [dva](https://dvajs.com/ "dva")
 
-| 属性        | 说明   |  备注  |
-| --------   | -----:  | :----:  |
-| namespace      | 命名空间   |   必须     |
-| state        |   状态   |   object   |
-| subscriptions  |    单一数据源的订阅,page.init时执行, 暂不具备done参数    |  参数{dispatch, history, select}  |
-| effects  |    可进行一些异步操作     |    |
-| reducers  |    纯函数     |    |
 
 ### model 方法
 详情参阅 [dva](https://dvajs.com/ "dva")
