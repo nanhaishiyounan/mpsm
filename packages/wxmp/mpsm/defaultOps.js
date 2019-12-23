@@ -33,8 +33,12 @@ export const defaultOps = {
     _batch: 0,
     _batchData: {data: {}, callbacks: []},
     _subscribers: {},
+    _initDone: false,
   },
   onLoad() {
+    if (this[prefix]._initDone) {
+      return
+    }
     this.dispatch = dispatchGroup
     this.update = update
     initCloneData(this)
@@ -46,7 +50,7 @@ export const defaultOps = {
     initGroupToProps(this)
     initPropsToData(this)
     initDataToComputed(this)
-
+    this[prefix]._initDone = true
   },
   onUnload() {
     removePage(this)
@@ -56,6 +60,9 @@ export const defaultOps = {
 
 const defaultComponentLifetimes = {
   created(ops) {
+    if (this[prefix] && this[prefix]._initDone) {
+      return
+    }
     this[prefix] = {
       _pageLifetimes: ops[prefix]._pageLifetimes,
       _mapPropsToData: ops[prefix]._mapPropsToData,
@@ -70,12 +77,16 @@ const defaultComponentLifetimes = {
       _cloneData: {},
       _batch: 0,
       _batchData: {data: {}, callbacks: []},
-      _hasDetached: false
+      _hasDetached: false,
+      _initDone: false,
     }
     this.dispatch = dispatchGroup
     this.update = update
   },
   attached() {
+    if (this[prefix]._initDone) {
+      return
+    }
     this[prefix]._page = currPage()
     if (this.data.groupName) {
       this[prefix]._indexOfComponents = this[prefix]._page[prefix]._components.push(this) - 1
@@ -91,6 +102,7 @@ const defaultComponentLifetimes = {
     initPropsToData(this)
     initDataToComputed(this)
     proxyProperties(this)
+    this[prefix]._initDone = true
   },
   detached() {
     this[prefix]._hasDetached = true
