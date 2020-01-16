@@ -97,7 +97,8 @@ export function selectGroup(context) {
   }
   const groupName = context.data.groupName
   const groupKeys = context.data.groupKeys
-  const group = context[prefix]._page[prefix]._groups[groupName]
+  const group = context[prefix]._page[prefix]._groups[groupName] || {}
+  console.log('group!', context[prefix]._page[prefix]._groups, groupName, groupKeys, group)
   for (let key in groupKeys) {
     group[key] = group[groupKeys[key]]
   }

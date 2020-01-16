@@ -32,7 +32,6 @@ component({
   },
   attached: function () {
     console.log('this in b', this)
-    console.log('this in b', String(this.triggerEvent))
   }, // 此处attached的声明会被lifetimes字段中的声明覆盖
   ready: function() {
   },

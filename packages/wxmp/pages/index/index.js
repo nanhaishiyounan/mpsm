@@ -28,7 +28,7 @@ page({
     }
   },
   onLoad() {
-
+    console.log(this)
   },
   sortCount() {
     this.data.gd.sort += 1

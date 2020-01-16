@@ -1,7 +1,6 @@
-import {isObject, isString, isUndefined, prefix, $setDataKey} from "./util"
+import {isObject, isString, isUndefined, prefix, $setDataKey, clone} from "./util"
 import {select, updateState, updateStateGroup} from "./model"
 import notify, {notifyGroup} from "./notify"
-import {clone} from "../utils/util";
 
 
 export function dispatch({type, payload, lazy = true, batch = true}) {

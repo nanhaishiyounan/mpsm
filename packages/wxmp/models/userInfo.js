@@ -16,7 +16,7 @@ export default {
             prev,
             current
           },
-          batch: false
+          batch: false,
         })
       }
       history.listen(callback)

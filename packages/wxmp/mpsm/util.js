@@ -143,5 +143,42 @@ export function canWriteSetData(context) {
   const descriptor = Object.getOwnPropertyDescriptor(context, 'setData')
   return descriptor && descriptor.writable
 }
+export function proxyData(data = {}, result = {}) {
+  return _proxyData(data, '', result)
+
+}
+function __proxy__() {}
+function _proxyData(data, path = '', result) {
+  if (typeof data !== 'object') {
+    return
+  }
+  return new Proxy(data, {
+    getPrototypeOf() {
+      return __proxy__.prototype
+    },
+    get(target, key) {
+      let currentPath = isArray(target) ? `${path}[${key}]` : `${path ? path + '.' : ''}${key}`
+      if (typeof target[key] === 'object' && !(target[key] instanceof __proxy__)) {
+        target[key] = _proxyData(target[key], currentPath, result)
+      }
+      return target[key]
+    },
+    set(target, key, value) {
+      let currentPath = isArray(target) ? `${path}[${key}]` : `${path ? path + '.' : ''}${key}`
+      if (!isArray(target) || key !== 'length' ) {
+        result[currentPath] = value
+      }
+
+      if (isObject(value)) {
+        Reflect.set(target, key, _proxyData(value, currentPath, result))
+      } else {
+        Reflect.set(target, key, value)
+      }
+
+      return true
+    }
+  })
+}
+
 export const prefix = '_mpsm_'
 export const $setDataKey = '$setData'
